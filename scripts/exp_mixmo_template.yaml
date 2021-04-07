@@ -1,0 +1,76 @@
+num_members: %(num_members)s
+
+data:
+  dataset: %(dataset_name)s%(num_classes)s
+  num_classes: %(num_classes)s
+
+training:
+  nb_epochs: %(nb_epochs)s
+  batch_size: %(batch_size)s
+  dataset_wrapper:
+    mixmo:
+      mix_method:
+        method_name: %(mixmo_mix_method_name)s
+        prob: %(mixmo_mix_prob)s
+        replacement_method_name: mixup
+      alpha: %(mixmo_alpha)s
+      weight_root: %(mixmo_weight_root)s
+    msda:
+      beta: 1
+      prob: 0.5
+      mix_method: %(msda_mix_method)s
+    da_method: %(da_method)s
+  batch_sampler:
+    batch_repetitions: %(batch_repetitions)s
+    proba_input_repetition: 0
+
+model_wrapper:
+  name: classifier
+  network:
+    name: %(classifier)s
+    depth: %(depth)s
+    widen_factor: %(widen_factor)s
+  loss:
+    listloss:
+      - name: soft_cross_entropy
+        display_name: ce0
+        coeff: 1
+        input: logits_0
+        target: target_0
+      - name: soft_cross_entropy
+        display_name: ce1
+        coeff: "<num_members"
+        input: logits_1
+        target: target_1
+      - name: soft_cross_entropy
+        display_name: ce2
+        coeff: "<num_members"
+        input: logits_2
+        target: target_2
+    name: multitask
+    display_name: main
+    l2_reg: %(l2_reg)s
+  metrics:
+    - accuracy
+  metrics_only_test:
+    - nll
+    - accuracytop5
+    - diversity
+    - ece
+    - auc
+    - brier
+  optimizer:
+    name: sgd
+    params:
+      lr: %(lrinit)s
+      momentum: 0.9
+      weight_decay: %(weight_decay_sgd)s
+      nesterov: True
+  warmup_period: %(warmup_period)s
+  lr_schedule:
+    name: multigamma_step
+    params:
+      dict_milestone_to_gamma:
+        %(milestone1)s: 0.1
+        %(milestone2)s: 0.1
+        %(milestone3)s: 0.1

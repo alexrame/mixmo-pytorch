@@ -1,0 +1,76 @@
+num_members: 2
+
+data:
+  dataset: cifar10
+  num_classes: 10
+
+training:
+  nb_epochs: 300
+  batch_size: 64
+  dataset_wrapper:
+    mixmo:
+      mix_method:
+        method_name: cutmix
+        prob: 0.5
+        replacement_method_name: mixup
+      alpha: 2
+      weight_root: 3
+    msda:
+      beta: 1
+      prob: 0.5
+      mix_method: cutmix
+    da_method: null
+  batch_sampler:
+    batch_repetitions: 4
+    proba_input_repetition: 0
+
+model_wrapper:
+  name: classifier
+  network:
+    name: wideresnetmixmo
+    depth: 28
+    widen_factor: 10
+  loss:
+    listloss:
+      - name: soft_cross_entropy
+        display_name: ce0
+        coeff: 1
+        input: logits_0
+        target: target_0
+      - name: soft_cross_entropy
+        display_name: ce1
+        coeff: "<num_members"
+        input: logits_1
+        target: target_1
+      - name: soft_cross_entropy
+        display_name: ce2
+        coeff: "<num_members"
+        input: logits_2
+        target: target_2
+    name: multitask
+    display_name: main
+    l2_reg: 0.0003
+  metrics:
+    - accuracy
+  metrics_only_test:
+    - nll
+    - accuracytop5
+    - diversity
+    - ece
+    - auc
+    - brier
+  optimizer:
+    name: sgd
+    params:
+      lr: 0.0125
+      momentum: 0.9
+      weight_decay: 0
+      nesterov: True
+  warmup_period: 3128
+  lr_schedule:
+    name: multigamma_step
+    params:
+      dict_milestone_to_gamma:
+        101: 0.1
+        201: 0.1
+        226: 0.1

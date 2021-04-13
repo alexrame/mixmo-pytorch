@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Contrast
+===================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Contrast

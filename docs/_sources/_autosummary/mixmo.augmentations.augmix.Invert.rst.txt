@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Invert
+=================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Invert

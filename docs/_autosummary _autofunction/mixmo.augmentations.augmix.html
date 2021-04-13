@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.augmentations.augmix &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>mixmo.augmentations.augmix</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary _autofunction/mixmo.augmentations.augmix.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-mixmo.augmentations.augmix">
+<span id="mixmo-augmentations-augmix"></span><h1>mixmo.augmentations.augmix<a class="headerlink" href="#module-mixmo.augmentations.augmix" title="Permalink to this headline">¶</a></h1>
+<p>Implementation following setups from PuzzleMix authors
+According to the seminal code: <a class="reference external" href="https://github.com/google-research/augmix/blob/master/cifar.py">https://github.com/google-research/augmix/blob/master/cifar.py</a>
+This code structure is borrowed from:
+<a class="reference external" href="https://github.com/ildoonet/pytorch-randaugment/blob/616ef12a5176169b4e1e645728f3dedd1a5a148e/RandAugment/augmentations.py">https://github.com/ildoonet/pytorch-randaugment/blob/616ef12a5176169b4e1e645728f3dedd1a5a148e/RandAugment/augmentations.py</a></p>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.AutoContrast.html#mixmo.augmentations.augmix.AutoContrast" title="mixmo.augmentations.augmix.AutoContrast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoContrast</span></code></a>(img, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Brightness.html#mixmo.augmentations.augmix.Brightness" title="mixmo.augmentations.augmix.Brightness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Brightness</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Color.html#mixmo.augmentations.augmix.Color" title="mixmo.augmentations.augmix.Color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Color</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Contrast.html#mixmo.augmentations.augmix.Contrast" title="mixmo.augmentations.augmix.Contrast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Contrast</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Equalize.html#mixmo.augmentations.augmix.Equalize" title="mixmo.augmentations.augmix.Equalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Equalize</span></code></a>(img, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Identity.html#mixmo.augmentations.augmix.Identity" title="mixmo.augmentations.augmix.Identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Identity</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Invert.html#mixmo.augmentations.augmix.Invert" title="mixmo.augmentations.augmix.Invert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Invert</span></code></a>(img, *args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Posterize.html#mixmo.augmentations.augmix.Posterize" title="mixmo.augmentations.augmix.Posterize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Posterize</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Rotate.html#mixmo.augmentations.augmix.Rotate" title="mixmo.augmentations.augmix.Rotate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rotate</span></code></a>(img, v[, myrandom])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Sharpness.html#mixmo.augmentations.augmix.Sharpness" title="mixmo.augmentations.augmix.Sharpness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sharpness</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.ShearX.html#mixmo.augmentations.augmix.ShearX" title="mixmo.augmentations.augmix.ShearX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShearX</span></code></a>(img, v[, myrandom])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.ShearY.html#mixmo.augmentations.augmix.ShearY" title="mixmo.augmentations.augmix.ShearY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShearY</span></code></a>(img, v[, myrandom])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.Solarize.html#mixmo.augmentations.augmix.Solarize" title="mixmo.augmentations.augmix.Solarize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Solarize</span></code></a>(img, v, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.TranslateX.html#mixmo.augmentations.augmix.TranslateX" title="mixmo.augmentations.augmix.TranslateX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TranslateX</span></code></a>(img, v[, myrandom])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.TranslateY.html#mixmo.augmentations.augmix.TranslateY" title="mixmo.augmentations.augmix.TranslateY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TranslateY</span></code></a>(img, v[, myrandom])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.augment_list.html#mixmo.augmentations.augmix.augment_list" title="mixmo.augmentations.augmix.augment_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">augment_list</span></code></a>([include_auto_contrast])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.get_value_when_none.html#mixmo.augmentations.augmix.get_value_when_none" title="mixmo.augmentations.augmix.get_value_when_none"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_value_when_none</span></code></a>(value, default_value)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.augmentations.augmix.AugMix.html#mixmo.augmentations.augmix.AugMix" title="mixmo.augmentations.augmix.AugMix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AugMix</span></code></a>([seed, mixture_depth, mixture_width, …])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

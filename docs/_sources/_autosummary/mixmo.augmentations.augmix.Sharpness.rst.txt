@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Sharpness
+====================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Sharpness

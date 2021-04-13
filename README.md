@@ -1,6 +1,6 @@
 # MixMo: Mixing Multiple Inputs for Multiple Outputs via Deep Subnetworks
 
-Official Pytorch implementation of the MixMo framework | [paper](https://arxiv.org/abs/2103.06132)
+Official PyTorch implementation of the MixMo framework | [paper](https://arxiv.org/abs/2103.06132) | [docs](https://alexrame.github.io/mixmo-pytorch)
 
 [Alexandre Ramé](https://alexrame.github.io/), [Rémy Sun](http://perso.eleves.ens-rennes.fr/people/remy.sun/), [Matthieu Cord](http://webia.lip6.fr/~cord/)
 

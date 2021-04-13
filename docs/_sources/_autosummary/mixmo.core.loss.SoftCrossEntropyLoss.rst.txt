@@ -1,0 +1,65 @@
+﻿mixmo.core.loss.SoftCrossEntropyLoss
+====================================
+
+.. currentmodule:: mixmo.core.loss
+
+.. autoclass:: SoftCrossEntropyLoss
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SoftCrossEntropyLoss.__init__
+      ~SoftCrossEntropyLoss.add_module
+      ~SoftCrossEntropyLoss.apply
+      ~SoftCrossEntropyLoss.buffers
+      ~SoftCrossEntropyLoss.children
+      ~SoftCrossEntropyLoss.cpu
+      ~SoftCrossEntropyLoss.cuda
+      ~SoftCrossEntropyLoss.double
+      ~SoftCrossEntropyLoss.eval
+      ~SoftCrossEntropyLoss.extra_repr
+      ~SoftCrossEntropyLoss.float
+      ~SoftCrossEntropyLoss.forward
+      ~SoftCrossEntropyLoss.get_accumulator_stats
+      ~SoftCrossEntropyLoss.half
+      ~SoftCrossEntropyLoss.load_state_dict
+      ~SoftCrossEntropyLoss.modules
+      ~SoftCrossEntropyLoss.named_buffers
+      ~SoftCrossEntropyLoss.named_children
+      ~SoftCrossEntropyLoss.named_modules
+      ~SoftCrossEntropyLoss.named_parameters
+      ~SoftCrossEntropyLoss.parameters
+      ~SoftCrossEntropyLoss.print_details
+      ~SoftCrossEntropyLoss.register_backward_hook
+      ~SoftCrossEntropyLoss.register_buffer
+      ~SoftCrossEntropyLoss.register_forward_hook
+      ~SoftCrossEntropyLoss.register_forward_pre_hook
+      ~SoftCrossEntropyLoss.register_parameter
+      ~SoftCrossEntropyLoss.requires_grad_
+      ~SoftCrossEntropyLoss.share_memory
+      ~SoftCrossEntropyLoss.start_accumulator
+      ~SoftCrossEntropyLoss.state_dict
+      ~SoftCrossEntropyLoss.to
+      ~SoftCrossEntropyLoss.train
+      ~SoftCrossEntropyLoss.type
+      ~SoftCrossEntropyLoss.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SoftCrossEntropyLoss.dump_patches
+   
+   

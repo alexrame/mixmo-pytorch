@@ -1,0 +1,37 @@
+﻿mixmo.core.scheduler
+====================
+
+.. automodule:: mixmo.core.scheduler
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_scheduler
+      get_warmup_scheduler
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      GradualWarmupScheduler
+      MultiGammaStepLR
+   
+   
+
+   
+   
+   
+
+
+

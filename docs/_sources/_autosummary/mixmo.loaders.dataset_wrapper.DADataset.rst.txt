@@ -1,0 +1,27 @@
+﻿mixmo.loaders.dataset\_wrapper.DADataset
+========================================
+
+.. currentmodule:: mixmo.loaders.dataset_wrapper
+
+.. autoclass:: DADataset
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DADataset.__init__
+      ~DADataset.call_dataset
+      ~DADataset.set_ratio_epoch
+   
+   
+
+   
+   
+   

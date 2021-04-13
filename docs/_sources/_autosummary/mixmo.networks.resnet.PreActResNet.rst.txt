@@ -1,0 +1,63 @@
+﻿mixmo.networks.resnet.PreActResNet
+==================================
+
+.. currentmodule:: mixmo.networks.resnet
+
+.. autoclass:: PreActResNet
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PreActResNet.__init__
+      ~PreActResNet.add_module
+      ~PreActResNet.apply
+      ~PreActResNet.buffers
+      ~PreActResNet.children
+      ~PreActResNet.cpu
+      ~PreActResNet.cuda
+      ~PreActResNet.double
+      ~PreActResNet.eval
+      ~PreActResNet.extra_repr
+      ~PreActResNet.float
+      ~PreActResNet.forward
+      ~PreActResNet.half
+      ~PreActResNet.load_state_dict
+      ~PreActResNet.modules
+      ~PreActResNet.named_buffers
+      ~PreActResNet.named_children
+      ~PreActResNet.named_modules
+      ~PreActResNet.named_parameters
+      ~PreActResNet.parameters
+      ~PreActResNet.register_backward_hook
+      ~PreActResNet.register_buffer
+      ~PreActResNet.register_forward_hook
+      ~PreActResNet.register_forward_pre_hook
+      ~PreActResNet.register_parameter
+      ~PreActResNet.requires_grad_
+      ~PreActResNet.share_memory
+      ~PreActResNet.state_dict
+      ~PreActResNet.to
+      ~PreActResNet.train
+      ~PreActResNet.type
+      ~PreActResNet.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PreActResNet.dense_gaussian
+      ~PreActResNet.dump_patches
+   
+   

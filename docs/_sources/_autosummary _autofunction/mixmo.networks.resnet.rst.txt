@@ -1,0 +1,31 @@
+mixmo.networks.resnet
+=====================
+
+.. automodule:: mixmo.networks.resnet
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      PreActBlock
+      PreActResNet
+      PreActResNetMixMo
+   
+   
+
+   
+   
+   
+
+
+

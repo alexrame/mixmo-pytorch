@@ -1,0 +1,31 @@
+﻿mixmo.core.scheduler.GradualWarmupScheduler
+===========================================
+
+.. currentmodule:: mixmo.core.scheduler
+
+.. autoclass:: GradualWarmupScheduler
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GradualWarmupScheduler.__init__
+      ~GradualWarmupScheduler.get_last_lr
+      ~GradualWarmupScheduler.get_lr
+      ~GradualWarmupScheduler.get_lr_warmup
+      ~GradualWarmupScheduler.load_state_dict
+      ~GradualWarmupScheduler.state_dict
+      ~GradualWarmupScheduler.step
+   
+   
+
+   
+   
+   

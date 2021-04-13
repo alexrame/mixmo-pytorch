@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.learners.learner.Learner &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mixmo.learners.model_wrapper" href="mixmo.learners.model_wrapper.html" />
+    <link rel="prev" title="mixmo.learners.learner" href="mixmo.learners.learner.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mixmo.html">mixmo</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mixmo.augmentations.html">mixmo.augmentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.core.html">mixmo.core</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="mixmo.learners.html">mixmo.learners</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mixmo.learners.abstract_learner.html">mixmo.learners.abstract_learner</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="mixmo.learners.learner.html">mixmo.learners.learner</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">mixmo.learners.learner.Learner</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.learners.model_wrapper.html">mixmo.learners.model_wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.loaders.html">mixmo.loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.networks.html">mixmo.networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.utils.html">mixmo.utils</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="mixmo.html">mixmo</a> &raquo;</li>
+        
+          <li><a href="mixmo.learners.html">mixmo.learners</a> &raquo;</li>
+        
+          <li><a href="mixmo.learners.learner.html">mixmo.learners.learner</a> &raquo;</li>
+        
+      <li>mixmo.learners.learner.Learner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary/mixmo.learners.learner.Learner.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="mixmo-learners-learner-learner">
+<h1>mixmo.learners.learner.Learner<a class="headerlink" href="#mixmo-learners-learner-learner" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="mixmo.learners.learner.Learner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">mixmo.learners.learner.</span></code><code class="sig-name descname"><span class="pre">Learner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner" title="mixmo.learners.abstract_learner.AbstractLearner"><code class="xref py py-class docutils literal notranslate"><span class="pre">mixmo.learners.abstract_learner.AbstractLearner</span></code></a></p>
+<p>Learner object that defines the specific train and test loops for the model</p>
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mixmo.learners.learner.Learner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mixmo.learners.learner.Learner.__init__" title="mixmo.learners.learner.Learner.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(config_args, dloader, device)</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code>(inference_loader[, split])</p></td>
+<td><p>Perform an evaluation of the model</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mixmo.learners.learner.Learner.evaluate_loop" title="mixmo.learners.learner.Learner.evaluate_loop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_loop</span></code></a>(inference_loader)</p></td>
+<td><p>Evaluation loop over the dataset specified by the loader</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_checkpoint</span></code>(checkpoint[, …])</p></td>
+<td><p>Load checkpoint (and optimizer if included) to the wrapped model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_checkpoint</span></code>(epoch[, save_path])</p></td>
+<td><p>Save model (and optimizer) state dict</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_tb</span></code>(logs_dict, epoch)</p></td>
+<td><p>Write stats from logs_dict at epoch to the Tensoboard summary writer</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code>(epoch)</p></td>
+<td><p>Train for one epoch</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mixmo.learners.learner.Learner.train_loop" title="mixmo.learners.learner.Learner.train_loop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_loop</span></code></a>(epoch)</p></td>
+<td><p>Training loop for one epoch</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tb_logger</span></code></p></td>
+<td><p>Get (or initialize) the Tensorboard SummaryWriter</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner._prepare_batch_test">
+<code class="sig-name descname"><span class="pre">_prepare_batch_test</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner._prepare_batch_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner._prepare_batch_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the test batch by setting up the input dictionary and putting tensors on devices</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner._prepare_batch_train">
+<code class="sig-name descname"><span class="pre">_prepare_batch_train</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner._prepare_batch_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner._prepare_batch_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the train batch by setting up the input dictionary and putting tensors on devices</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner._subloop">
+<code class="sig-name descname"><span class="pre">_subloop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_tensors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backprop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner._subloop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner._subloop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic subloop for a step/batch (without optimization)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner._train_subloop">
+<code class="sig-name descname"><span class="pre">_train_subloop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_tensors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner._train_subloop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner._train_subloop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete training step for a batch, return summary logs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner.evaluate_loop">
+<code class="sig-name descname"><span class="pre">evaluate_loop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_loader</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner.evaluate_loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner.evaluate_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluation loop over the dataset specified by the loader</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mixmo.learners.learner.Learner.train_loop">
+<code class="sig-name descname"><span class="pre">train_loop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/learners/learner.html#Learner.train_loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.learners.learner.Learner.train_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Training loop for one epoch</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mixmo.learners.model_wrapper.html" class="btn btn-neutral float-right" title="mixmo.learners.model_wrapper" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mixmo.learners.learner.html" class="btn btn-neutral float-left" title="mixmo.learners.learner" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

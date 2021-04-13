@@ -1,0 +1,63 @@
+﻿mixmo.networks.wrn.WideResNetMixMo
+==================================
+
+.. currentmodule:: mixmo.networks.wrn
+
+.. autoclass:: WideResNetMixMo
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WideResNetMixMo.__init__
+      ~WideResNetMixMo.add_module
+      ~WideResNetMixMo.apply
+      ~WideResNetMixMo.buffers
+      ~WideResNetMixMo.children
+      ~WideResNetMixMo.cpu
+      ~WideResNetMixMo.cuda
+      ~WideResNetMixMo.double
+      ~WideResNetMixMo.eval
+      ~WideResNetMixMo.extra_repr
+      ~WideResNetMixMo.float
+      ~WideResNetMixMo.forward
+      ~WideResNetMixMo.half
+      ~WideResNetMixMo.load_state_dict
+      ~WideResNetMixMo.modules
+      ~WideResNetMixMo.named_buffers
+      ~WideResNetMixMo.named_children
+      ~WideResNetMixMo.named_modules
+      ~WideResNetMixMo.named_parameters
+      ~WideResNetMixMo.parameters
+      ~WideResNetMixMo.register_backward_hook
+      ~WideResNetMixMo.register_buffer
+      ~WideResNetMixMo.register_forward_hook
+      ~WideResNetMixMo.register_forward_pre_hook
+      ~WideResNetMixMo.register_parameter
+      ~WideResNetMixMo.requires_grad_
+      ~WideResNetMixMo.share_memory
+      ~WideResNetMixMo.state_dict
+      ~WideResNetMixMo.to
+      ~WideResNetMixMo.train
+      ~WideResNetMixMo.type
+      ~WideResNetMixMo.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WideResNetMixMo.dense_gaussian
+      ~WideResNetMixMo.dump_patches
+   
+   

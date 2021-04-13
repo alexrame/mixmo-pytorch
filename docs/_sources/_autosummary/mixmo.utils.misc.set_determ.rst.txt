@@ -1,0 +1,6 @@
+mixmo.utils.misc.set\_determ
+============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: set_determ

@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.mix
+======================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: mix

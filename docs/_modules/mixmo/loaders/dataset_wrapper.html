@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.loaders.dataset_wrapper &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../loaders.html">mixmo.loaders</a> &raquo;</li>
+        
+      <li>mixmo.loaders.dataset_wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.loaders.dataset_wrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Dataset wrappers for multi-input multi-output models with data augmentation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">misc</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">torchutils</span>
+<span class="kn">from</span> <span class="nn">mixmo.augmentations</span> <span class="kn">import</span> <span class="n">augmix</span><span class="p">,</span> <span class="n">mixing_blocks</span>
+
+
+<div class="viewcode-block" id="DADataset"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.DADataset.html#mixmo.loaders.dataset_wrapper.DADataset">[docs]</a><span class="k">class</span> <span class="nc">DADataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset wrapper with with outputs formatted as dictionaries and AugMix augmentation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DADataset.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.DADataset.html#mixmo.loaders.dataset_wrapper.DADataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">num_members</span><span class="p">,</span> <span class="n">dict_config</span><span class="p">,</span> <span class="n">properties</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_members</span> <span class="o">=</span> <span class="n">num_members</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span> <span class="o">=</span> <span class="n">dict_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_ratio_epoch</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_custom_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">set_ratio_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratioepoch</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ratio_epoch_current</span> <span class="o">=</span> <span class="n">ratioepoch</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve target and image, return a dictionary with the two</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pixels_0</span><span class="p">,</span> <span class="n">target_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_dataset</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="s2">&quot;index_0&quot;</span><span class="p">])</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pixels_0&quot;</span><span class="p">:</span> <span class="n">pixels_0</span><span class="p">,</span> <span class="s2">&quot;target_0&quot;</span><span class="p">:</span> <span class="n">target_0</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">dict_output</span>
+
+<div class="viewcode-block" id="DADataset.call_dataset"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.DADataset.html#mixmo.loaders.dataset_wrapper.DADataset.call_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">call_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get target and image, apply AugMix if necessary and return dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">misc</span><span class="o">.</span><span class="n">is_none</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;da_method&quot;</span><span class="p">]):</span>
+            <span class="n">pixels</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_pixels_postprocessing</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span>
+                <span class="n">index</span><span class="p">,</span> <span class="n">apply_postprocessing</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;da_method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;augmix&quot;</span><span class="p">:</span>
+                <span class="n">pixels</span> <span class="o">=</span> <span class="n">augmix</span><span class="o">.</span><span class="n">AugMix</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)(</span>
+                    <span class="n">image</span><span class="o">=</span><span class="n">dict_pixels_postprocessing</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">],</span>
+                    <span class="n">preprocess</span><span class="o">=</span><span class="n">dict_pixels_postprocessing</span><span class="p">[</span><span class="s2">&quot;postprocessing&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;da_method&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">torchutils</span><span class="o">.</span><span class="n">onehot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MSDADataset"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.MSDADataset.html#mixmo.loaders.dataset_wrapper.MSDADataset">[docs]</a><span class="k">class</span> <span class="nc">MSDADataset</span><span class="p">(</span><span class="n">DADataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset wrapper that returns dictionaries and applies MSDA augmentations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">reverse_if_first_minor</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_custom_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_init_msda</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_custom_init_msda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msda_mix_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;msda&quot;</span><span class="p">][</span><span class="s2">&quot;mix_method&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msda_beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;msda&quot;</span><span class="p">][</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msda_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;msda&quot;</span><span class="p">][</span><span class="s2">&quot;prob&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MSDADataset.call_msda"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.MSDADataset.html#mixmo.loaders.dataset_wrapper.MSDADataset.call_msda">[docs]</a>    <span class="k">def</span> <span class="nf">call_msda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_0</span><span class="p">,</span> <span class="n">mixmo_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed_da</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get two samples and mix them. Return a dictionary of sample and label</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Gather the two image/label pairs used by the augmentation</span>
+        <span class="n">pixels_0</span><span class="p">,</span> <span class="n">target_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_dataset</span><span class="p">(</span><span class="n">index_0</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed_da</span><span class="p">)</span>
+        <span class="n">skip_msda</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">msda_mix_method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">misc</span><span class="o">.</span><span class="n">random_lower_than</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msda_prob</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">skip_msda</span><span class="p">:</span>           <span class="c1"># Early exit if we are not mixing</span>
+            <span class="k">return</span> <span class="n">pixels_0</span><span class="p">,</span> <span class="n">target_0</span>
+
+        <span class="n">index_1</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="n">pixels_1</span><span class="p">,</span> <span class="n">target_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_dataset</span><span class="p">(</span><span class="n">index_1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed_da</span><span class="p">)</span>
+
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_0</span><span class="p">,</span> <span class="n">target_1</span><span class="p">]</span>
+
+        <span class="c1"># Get mixing masks</span>
+        <span class="n">msda_lams</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">sample_lams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msda_beta</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">msda_masks</span><span class="p">,</span> <span class="n">msda_lams</span> <span class="o">=</span> <span class="n">mixing_blocks</span><span class="o">.</span><span class="n">mix</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">msda_mix_method</span><span class="p">,</span>
+            <span class="n">lams</span><span class="o">=</span><span class="n">msda_lams</span><span class="p">,</span>
+            <span class="n">input_size</span><span class="o">=</span><span class="n">pixels_0</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Adjust the lams to account for later mixmo mixing that might alter masks</span>
+        <span class="k">if</span> <span class="n">mixmo_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">## approx for computational issues: mask should be symmetrical in channels</span>
+            <span class="n">mixmo_mask_0</span> <span class="o">=</span> <span class="n">mixmo_mask</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span><span class="s2">&quot;conv1_is_half_size&quot;</span><span class="p">):</span>
+                <span class="n">_msda_mask_0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">AvgPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))(</span><span class="n">msda_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+                <span class="n">msda_masks_for_lam</span> <span class="o">=</span> <span class="p">[</span><span class="n">_msda_mask_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mixmo_mask_0</span> <span class="o">=</span> <span class="n">mixmo_mask_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">msda_masks_for_lam</span> <span class="o">=</span> <span class="n">msda_masks</span>
+
+            <span class="c1">## Compute the adjusted ratios after mixmo mixing</span>
+            <span class="n">mean_mixmo_mask_0</span> <span class="o">=</span> <span class="n">mixmo_mask_0</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">msda_lams</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">msda_mask</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">mixmo_mask_0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">mean_mixmo_mask_0</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">msda_mask</span> <span class="ow">in</span> <span class="n">msda_masks_for_lam</span>
+            <span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span><span class="s2">&quot;conv1_is_half_size&quot;</span><span class="p">):</span>
+                <span class="n">lam</span> <span class="o">=</span> <span class="n">msda_lams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">msda_lams</span> <span class="o">=</span> <span class="p">[</span><span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">lam</span><span class="p">]</span>
+
+        <span class="c1"># Randomly reverse the roles of mixed samples (important to symmetrize CutMix, Patch-Up, ...)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse_if_first_minor</span> <span class="ow">and</span> <span class="n">msda_lams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="n">msda_pixels</span> <span class="o">=</span> <span class="n">msda_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">pixels_0</span> <span class="o">+</span> <span class="n">msda_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">pixels_1</span>
+            <span class="n">msda_lams</span> <span class="o">=</span> <span class="p">[</span><span class="n">msda_lams</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">msda_lams</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msda_pixels</span> <span class="o">=</span> <span class="n">msda_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">pixels_0</span> <span class="o">+</span> <span class="n">msda_masks</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">pixels_1</span>
+
+        <span class="c1"># Standard MSDA label interpolation</span>
+        <span class="n">msda_targets</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span>
+                <span class="n">lam</span> <span class="o">*</span> <span class="n">target</span> <span class="k">for</span> <span class="n">lam</span><span class="p">,</span> <span class="n">target</span>
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">msda_lams</span><span class="p">,</span> <span class="n">targets</span><span class="p">)])</span>
+
+        <span class="k">return</span> <span class="n">msda_pixels</span><span class="p">,</span> <span class="n">msda_targets</span></div>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dictionary with the relevant sample and target, possibly mixed with another</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">msda_mix_method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DADataset</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+        <span class="n">pixels_0</span><span class="p">,</span> <span class="n">target_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_msda</span><span class="p">(</span><span class="n">index_0</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="s2">&quot;index_0&quot;</span><span class="p">])</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pixels_0&quot;</span><span class="p">:</span> <span class="n">pixels_0</span><span class="p">,</span> <span class="s2">&quot;target_0&quot;</span><span class="p">:</span> <span class="n">target_0</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">dict_output</span></div>
+
+
+<div class="viewcode-block" id="MixMoDataset"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.MixMoDataset.html#mixmo.loaders.dataset_wrapper.MixMoDataset">[docs]</a><span class="k">class</span> <span class="nc">MixMoDataset</span><span class="p">(</span><span class="n">MSDADataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset wrapper that returns dictionaries of multiple samples, and applies MSDA augmentations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">reverse_if_first_minor</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_custom_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_init_msda</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_init_mixmo</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_custom_init_mixmo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_mixmo_mix_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;mixmo&quot;</span><span class="p">][</span><span class="s2">&quot;mix_method&quot;</span><span class="p">]</span>
+        <span class="c1"># dict with key &#39;method_name&#39;, &#39;prob&#39; and &#39;replacement_method_name&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixmo_alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;mixmo&quot;</span><span class="p">][</span><span class="s2">&quot;alpha&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixmo_weight_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_config</span><span class="p">[</span><span class="s2">&quot;mixmo&quot;</span><span class="p">][</span><span class="s2">&quot;weight_root&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MixMoDataset.get_mixmo_mix_method_at_ratio_epoch"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.MixMoDataset.html#mixmo.loaders.dataset_wrapper.MixMoDataset.get_mixmo_mix_method_at_ratio_epoch">[docs]</a>    <span class="k">def</span> <span class="nf">get_mixmo_mix_method_at_ratio_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select which mixing method should be used according to training scheduling.</span>
+
+<span class="sd">        Procedure:</span>
+<span class="sd">        Select self.dict_mixmo_mix_method[&quot;method_name&quot;] with proba self.dict_mixmo_mix_method[&quot;prob&quot;] that is linearly decreased towards 0 after 11/12 of training process.</span>
+<span class="sd">        Otherwise, use self.dict_mixmo_mix_method[&quot;replacement_method_name&quot;] (in general mixup)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_mixmo_mix_method</span><span class="p">[</span><span class="s2">&quot;method_name&quot;</span><span class="p">]</span>
+        <span class="n">replacement_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_mixmo_mix_method</span><span class="p">[</span><span class="s2">&quot;replacement_method_name&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">replacement_method</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">method</span>
+
+        <span class="c1"># Check the actual switch probability according to scheduler and current epoch</span>
+        <span class="n">default_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_mixmo_mix_method</span><span class="p">[</span><span class="s2">&quot;prob&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_epoch_current</span> <span class="o">&lt;</span> <span class="n">config</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">RATIO_EPOCH_DECREASE</span><span class="p">:</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">default_prob</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eta</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_epoch_current</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">config</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">RATIO_EPOCH_DECREASE</span><span class="p">))</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">default_prob</span> <span class="o">*</span> <span class="n">eta</span>
+
+        <span class="c1"># Choose the method depending on draw result</span>
+        <span class="k">if</span> <span class="n">misc</span><span class="o">.</span><span class="n">random_lower_than</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">batch_seed</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">method</span>
+        <span class="k">return</span> <span class="n">replacement_method</span></div>
+
+<div class="viewcode-block" id="MixMoDataset._init_dict_output_mixmo"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.MixMoDataset.html#mixmo.loaders.dataset_wrapper.MixMoDataset._init_dict_output_mixmo">[docs]</a>    <span class="k">def</span> <span class="nf">_init_dict_output_mixmo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_seed</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute MixMo block variables (masks, lams) and prepare it as a dictionary output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get MixMo mixing method and the corresponding masks/lams</span>
+        <span class="n">mixmo_mix_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mixmo_mix_method_at_ratio_epoch</span><span class="p">(</span>
+            <span class="n">batch_seed</span><span class="o">=</span><span class="n">batch_seed</span>
+        <span class="p">)</span>
+        <span class="n">mixmo_lams</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">sample_lams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mixmo_alpha</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_members</span><span class="p">)</span>
+        <span class="n">mixmo_masks</span><span class="p">,</span> <span class="n">mixmo_lams</span> <span class="o">=</span> <span class="n">mixing_blocks</span><span class="o">.</span><span class="n">mix</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">mixmo_mix_method</span><span class="p">,</span>
+            <span class="n">lams</span><span class="o">=</span><span class="n">mixmo_lams</span><span class="p">,</span>
+            <span class="n">input_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span><span class="s2">&quot;conv1_input_size&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Shuffle the roles of the inputs (same for every sample in the batch)</span>
+        <span class="c1"># Mostly useful for asymmetrical mixing (CutMix, ...)</span>
+        <span class="k">assert</span> <span class="n">batch_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">batch_seed</span><span class="o">+</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">RANDOM</span><span class="o">.</span><span class="n">SEED_OFFSET_MIXMO</span><span class="p">)</span>
+        <span class="n">zipped_masking</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mixmo_lams</span><span class="p">,</span> <span class="n">mixmo_masks</span><span class="p">))</span>
+        <span class="n">myrandom</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">zipped_masking</span><span class="p">)</span>
+
+        <span class="c1"># Format everything nicely in dictionaries</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;mixmo_lams&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">zipped_masking</span><span class="p">],</span> <span class="s2">&quot;mixmo_masks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">el</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">zipped_masking</span><span class="p">]}}</span>
+        <span class="k">if</span> <span class="n">mixmo_mix_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mixing_blocks</span><span class="o">.</span><span class="n">LIST_METHODS_NOT_INVARIANT_CHANNELS</span><span class="p">:</span>
+            <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;mixmo_masks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">mimo_mix_mask</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">mimo_mix_mask</span> <span class="ow">in</span> <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;mixmo_masks&quot;</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">dict_output</span></div>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a (mixed) sample/label pair for each head and output it in a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initialize output with mixing block descriptors</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_dict_output_mixmo</span><span class="p">(</span>
+            <span class="n">batch_seed</span><span class="o">=</span><span class="n">index</span><span class="p">[</span><span class="s2">&quot;batch_seed&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Compute sample/label pairs for each head</span>
+        <span class="k">for</span> <span class="n">num_member</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_members</span><span class="p">):</span>
+            <span class="n">member_index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="s2">&quot;index_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_member</span><span class="p">)]</span>
+
+            <span class="c1"># useful only for augmix: force same transfos on batch duplicated samples</span>
+            <span class="n">seed_da</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="s2">&quot;batch_seed&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">RANDOM</span><span class="o">.</span><span class="n">SEED_DA</span> <span class="o">*</span> <span class="n">member_index</span> <span class="o">+</span> <span class="n">num_member</span>
+
+            <span class="c1">## Retrieve and compute mixed sample/label, accounting for mixmo mixing</span>
+            <span class="n">seed_da</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="s2">&quot;batch_seed&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">RANDOM</span><span class="o">.</span><span class="n">SEED_DA</span> <span class="o">*</span> <span class="n">member_index</span> <span class="o">+</span> <span class="n">num_member</span>
+
+            <span class="n">pixels_member</span><span class="p">,</span> <span class="n">target_member</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_msda</span><span class="p">(</span>
+                <span class="n">index_0</span><span class="o">=</span><span class="n">member_index</span><span class="p">,</span>
+                <span class="n">mixmo_mask</span><span class="o">=</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;mixmo_masks&quot;</span><span class="p">][</span><span class="n">num_member</span><span class="p">],</span>
+                <span class="n">seed_da</span><span class="o">=</span><span class="n">seed_da</span>
+            <span class="p">)</span>
+
+            <span class="c1">## Format output</span>
+            <span class="n">dict_output</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                <span class="s2">&quot;pixels_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_member</span><span class="p">):</span> <span class="n">pixels_member</span><span class="p">,</span>
+                <span class="s2">&quot;target_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_member</span><span class="p">):</span> <span class="n">target_member</span>
+            <span class="p">})</span>
+
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_balancing</span><span class="p">(</span><span class="n">dict_output</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_members</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># only keep first to reduce memory footprint</span>
+            <span class="c1"># as the second can be obtained by 1 - mask</span>
+            <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;mixmo_masks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;mixmo_masks&quot;</span><span class="p">][:</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">dict_output</span>
+
+<div class="viewcode-block" id="MixMoDataset._target_balancing"><a class="viewcode-back" href="../../../_autosummary/mixmo.loaders.dataset_wrapper.MixMoDataset.html#mixmo.loaders.dataset_wrapper.MixMoDataset._target_balancing">[docs]</a>    <span class="k">def</span> <span class="nf">_target_balancing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_output</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Final formatting of outputs with mixmo balancing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">apply_root</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixmo_weight_root</span><span class="p">))</span>
+
+        <span class="c1"># Get balancing weights</span>
+        <span class="n">_list_weights_not_normalized</span> <span class="o">=</span> <span class="p">[</span><span class="n">apply_root</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span> <span class="k">for</span> <span class="n">lam</span> <span class="ow">in</span> <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;mixmo_lams&quot;</span><span class="p">]]</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">_list_weights_not_normalized</span><span class="p">)</span>
+        <span class="n">list_weights</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num_members</span> <span class="o">*</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">norm</span> <span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">_list_weights_not_normalized</span><span class="p">]</span>
+
+        <span class="c1"># Apply weights: as we use categorical cross entropy, we can simply multiply the target</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_members</span><span class="p">):</span>
+            <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;target_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">*=</span> <span class="n">list_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">dict_output</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

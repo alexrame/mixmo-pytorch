@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Brightness
+=====================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Brightness

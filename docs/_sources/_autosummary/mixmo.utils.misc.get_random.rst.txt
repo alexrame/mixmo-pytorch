@@ -1,0 +1,6 @@
+mixmo.utils.misc.get\_random
+============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: get_random

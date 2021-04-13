@@ -1,0 +1,6 @@
+mixmo.core.metrics\_wrapper.get\_ece
+====================================
+
+.. currentmodule:: mixmo.core.metrics_wrapper
+
+.. autofunction:: get_ece

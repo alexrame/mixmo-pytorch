@@ -1,3 +1,7 @@
+"""
+Base Learner wrapper definitions for logging, training and evaluating models
+"""
+
 import torch
 from collections import OrderedDict
 from torch.utils.tensorboard import SummaryWriter
@@ -60,12 +64,12 @@ class AbstractLearner:
                 logs_dict["test/accuracy"]["value"], epoch
             )
 
-    def load_checkpoint(self, checkpoint, include_optimizer=True):
+    def load_checkpoint(self, checkpoint, include_optimizer=True, return_epoch=False):
         """
         Load checkpoint (and optimizer if included) to the wrapped model
         """
-        checkpoint = torch.load(checkpoint, map_location=self.device)
 
+        checkpoint = torch.load(checkpoint, map_location=self.device)
         self.model_wrapper.network.load_state_dict(checkpoint[self.model_wrapper.name + "_state_dict"], strict=True)
         if include_optimizer:
             if self.model_wrapper.optimizer is not None:
@@ -73,6 +77,8 @@ class AbstractLearner:
                     checkpoint[self.model_wrapper.name + "_optimizer_state_dict"])
             else:
                 assert self.model_wrapper.name + "_optimizer_state_dict" not in checkpoint
+        if return_epoch:
+            return checkpoint["epoch"]
 
     def save_checkpoint(self, epoch, save_path=None):
         """
@@ -151,10 +157,14 @@ class AbstractLearner:
         ## and not config.cfg.DEBUG
         if is_best_epoch:
             logs_dict["general/checkpoint_saved"] = {"value": 1.0, "string": "1.0"}
-            self.save_checkpoint(epoch)
-            LOGGER.warning(f"Epoch: {epoch} was saved")
+            save_epoch = True
         else:
             logs_dict["general/checkpoint_saved"] = {"value": 0.0, "string": "0.0"}
+            save_epoch = (epoch % config.cfg.SAVE_EVERY_X_EPOCH == 0)
+
+        if save_epoch:
+            self.save_checkpoint(epoch)
+            LOGGER.warning(f"Epoch: {epoch} was saved")
 
         ## CSV logging
         short_logs_dict = OrderedDict(

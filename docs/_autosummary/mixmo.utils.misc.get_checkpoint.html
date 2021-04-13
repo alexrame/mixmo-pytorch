@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.utils.misc.get_checkpoint &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mixmo.utils.misc.get_logs_path" href="mixmo.utils.misc.get_logs_path.html" />
+    <link rel="prev" title="mixmo.utils.misc.find_best_epoch" href="mixmo.utils.misc.find_best_epoch.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mixmo.html">mixmo</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mixmo.augmentations.html">mixmo.augmentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.core.html">mixmo.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.learners.html">mixmo.learners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.loaders.html">mixmo.loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.networks.html">mixmo.networks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="mixmo.utils.html">mixmo.utils</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mixmo.utils.config.html">mixmo.utils.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.utils.logger.html">mixmo.utils.logger</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="mixmo.utils.misc.html">mixmo.utils.misc</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc._print_dict.html">mixmo.utils.misc._print_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.clean_startswith.html">mixmo.utils.misc.clean_startswith</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.clean_update.html">mixmo.utils.misc.clean_update</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.csv_writter.html">mixmo.utils.misc.csv_writter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.dirty_update.html">mixmo.utils.misc.dirty_update</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.find_best_epoch.html">mixmo.utils.misc.find_best_epoch</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">mixmo.utils.misc.get_checkpoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.get_logs_path.html">mixmo.utils.misc.get_logs_path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.get_model_path.html">mixmo.utils.misc.get_model_path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.get_nprandom.html">mixmo.utils.misc.get_nprandom</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.get_output_folder_from_config.html">mixmo.utils.misc.get_output_folder_from_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.get_previous_ckpt.html">mixmo.utils.misc.get_previous_ckpt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.get_random.html">mixmo.utils.misc.get_random</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.ifnotfound_update.html">mixmo.utils.misc.ifnotfound_update</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.is_float.html">mixmo.utils.misc.is_float</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.is_int.html">mixmo.utils.misc.is_int</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.is_nan.html">mixmo.utils.misc.is_nan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.is_none.html">mixmo.utils.misc.is_none</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.is_zero.html">mixmo.utils.misc.is_zero</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.load_config_yaml.html">mixmo.utils.misc.load_config_yaml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.load_yaml.html">mixmo.utils.misc.load_yaml</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.print_args.html">mixmo.utils.misc.print_args</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.print_dict.html">mixmo.utils.misc.print_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.random_lower_than.html">mixmo.utils.misc.random_lower_than</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.sample_lams.html">mixmo.utils.misc.sample_lams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.set_determ.html">mixmo.utils.misc.set_determ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.utils.misc.update.html">mixmo.utils.misc.update</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.utils.torchsummary.html">mixmo.utils.torchsummary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.utils.torchutils.html">mixmo.utils.torchutils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.utils.visualize.html">mixmo.utils.visualize</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="mixmo.html">mixmo</a> &raquo;</li>
+        
+          <li><a href="mixmo.utils.html">mixmo.utils</a> &raquo;</li>
+        
+          <li><a href="mixmo.utils.misc.html">mixmo.utils.misc</a> &raquo;</li>
+        
+      <li>mixmo.utils.misc.get_checkpoint</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary/mixmo.utils.misc.get_checkpoint.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="mixmo-utils-misc-get-checkpoint">
+<h1>mixmo.utils.misc.get_checkpoint<a class="headerlink" href="#mixmo-utils-misc-get-checkpoint" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="mixmo.utils.misc.get_checkpoint">
+<code class="sig-prename descclassname"><span class="pre">mixmo.utils.misc.</span></code><code class="sig-name descname"><span class="pre">get_checkpoint</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/utils/misc.html#get_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.utils.misc.get_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mixmo.utils.misc.get_logs_path.html" class="btn btn-neutral float-right" title="mixmo.utils.misc.get_logs_path" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mixmo.utils.misc.find_best_epoch.html" class="btn btn-neutral float-left" title="mixmo.utils.misc.find_best_epoch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

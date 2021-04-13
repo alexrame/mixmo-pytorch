@@ -1,0 +1,25 @@
+﻿mixmo.augmentations.augmix.AugMix
+=================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autoclass:: AugMix
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AugMix.__init__
+   
+   
+
+   
+   
+   

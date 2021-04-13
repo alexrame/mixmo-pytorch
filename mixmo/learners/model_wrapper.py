@@ -1,3 +1,7 @@
+"""
+Utility definitions to wrap a model with losses, metrics and logs
+"""
+
 import copy
 import torch.nn.functional as F
 from collections import OrderedDict
@@ -22,8 +26,7 @@ def get_predictions(logits):
 
 
 class ModelWrapper:
-    """
-    Augment a model with losses, metrics, internal logs and other things
+    """Augment a model with losses, metrics, internal logs and other things
     """
 
     def __init__(self, config, config_args, device):
@@ -32,7 +35,6 @@ class ModelWrapper:
         self.config_args = config_args
         self.device = device
         self.mode = "notinit"
-
         self._init_main()
 
     def _init_main(self):

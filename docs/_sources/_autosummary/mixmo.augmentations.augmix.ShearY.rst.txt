@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.ShearY
+=================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: ShearY

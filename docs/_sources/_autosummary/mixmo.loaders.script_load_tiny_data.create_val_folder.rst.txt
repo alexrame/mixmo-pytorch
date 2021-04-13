@@ -1,0 +1,6 @@
+mixmo.loaders.script\_load\_tiny\_data.create\_val\_folder
+==========================================================
+
+.. currentmodule:: mixmo.loaders.script_load_tiny_data
+
+.. autofunction:: create_val_folder

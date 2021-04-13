@@ -1,0 +1,67 @@
+﻿mixmo.core.loss.WrapperLoss
+===========================
+
+.. currentmodule:: mixmo.core.loss
+
+.. autoclass:: WrapperLoss
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WrapperLoss.__init__
+      ~WrapperLoss.add_module
+      ~WrapperLoss.apply
+      ~WrapperLoss.buffers
+      ~WrapperLoss.children
+      ~WrapperLoss.cpu
+      ~WrapperLoss.cuda
+      ~WrapperLoss.double
+      ~WrapperLoss.eval
+      ~WrapperLoss.extra_repr
+      ~WrapperLoss.float
+      ~WrapperLoss.forward
+      ~WrapperLoss.get_accumulator_stats
+      ~WrapperLoss.half
+      ~WrapperLoss.l2_reg
+      ~WrapperLoss.load_state_dict
+      ~WrapperLoss.modules
+      ~WrapperLoss.named_buffers
+      ~WrapperLoss.named_children
+      ~WrapperLoss.named_modules
+      ~WrapperLoss.named_parameters
+      ~WrapperLoss.parameters
+      ~WrapperLoss.print_details
+      ~WrapperLoss.register_backward_hook
+      ~WrapperLoss.register_buffer
+      ~WrapperLoss.register_forward_hook
+      ~WrapperLoss.register_forward_pre_hook
+      ~WrapperLoss.register_parameter
+      ~WrapperLoss.requires_grad_
+      ~WrapperLoss.set_regularized_network
+      ~WrapperLoss.share_memory
+      ~WrapperLoss.start_accumulator
+      ~WrapperLoss.state_dict
+      ~WrapperLoss.to
+      ~WrapperLoss.train
+      ~WrapperLoss.type
+      ~WrapperLoss.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WrapperLoss.dump_patches
+   
+   

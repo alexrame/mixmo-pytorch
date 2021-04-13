@@ -1,0 +1,16 @@
+
+Welcome to MixMo's documentation!
+=================================
+
+This is the documentation for the official pytorch implementation of the MixMo framework.
+
+The organization of the code as well as detailed module and function  descriptions can be found by clicking the ``mixmo`` table below:
+
+.. autosummary::
+   :toctree: _autosummary
+   :template: custom-module-template.rst
+   :recursive:
+
+        mixmo
+
+.. mdinclude:: ../README.md

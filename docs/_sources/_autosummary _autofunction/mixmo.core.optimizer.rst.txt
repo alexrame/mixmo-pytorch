@@ -1,0 +1,29 @@
+mixmo.core.optimizer
+====================
+
+.. automodule:: mixmo.core.optimizer
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_optimizer
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

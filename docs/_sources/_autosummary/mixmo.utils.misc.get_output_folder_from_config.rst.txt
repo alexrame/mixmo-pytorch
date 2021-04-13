@@ -1,0 +1,6 @@
+mixmo.utils.misc.get\_output\_folder\_from\_config
+==================================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: get_output_folder_from_config

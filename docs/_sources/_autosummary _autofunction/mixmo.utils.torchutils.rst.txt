@@ -1,0 +1,33 @@
+mixmo.utils.torchutils
+======================
+
+.. automodule:: mixmo.utils.torchutils
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      kaiming_normal_truncated
+      onehot
+      randperm_static
+      truncated_normal_
+      weights_init_hetruncatednormal
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

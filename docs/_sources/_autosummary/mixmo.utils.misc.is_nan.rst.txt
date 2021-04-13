@@ -1,0 +1,6 @@
+mixmo.utils.misc.is\_nan
+========================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: is_nan

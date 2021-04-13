@@ -1,0 +1,66 @@
+﻿mixmo.core.temperature\_scaling.NetworkWithTemperature
+======================================================
+
+.. currentmodule:: mixmo.core.temperature_scaling
+
+.. autoclass:: NetworkWithTemperature
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NetworkWithTemperature.__init__
+      ~NetworkWithTemperature.add_module
+      ~NetworkWithTemperature.apply
+      ~NetworkWithTemperature.apply_temperature
+      ~NetworkWithTemperature.buffers
+      ~NetworkWithTemperature.children
+      ~NetworkWithTemperature.cpu
+      ~NetworkWithTemperature.cuda
+      ~NetworkWithTemperature.double
+      ~NetworkWithTemperature.eval
+      ~NetworkWithTemperature.extra_repr
+      ~NetworkWithTemperature.float
+      ~NetworkWithTemperature.forward
+      ~NetworkWithTemperature.half
+      ~NetworkWithTemperature.learn_temperature_gridsearch
+      ~NetworkWithTemperature.load_state_dict
+      ~NetworkWithTemperature.modules
+      ~NetworkWithTemperature.named_buffers
+      ~NetworkWithTemperature.named_children
+      ~NetworkWithTemperature.named_modules
+      ~NetworkWithTemperature.named_parameters
+      ~NetworkWithTemperature.parameters
+      ~NetworkWithTemperature.register_backward_hook
+      ~NetworkWithTemperature.register_buffer
+      ~NetworkWithTemperature.register_forward_hook
+      ~NetworkWithTemperature.register_forward_pre_hook
+      ~NetworkWithTemperature.register_parameter
+      ~NetworkWithTemperature.requires_grad_
+      ~NetworkWithTemperature.set_temperature
+      ~NetworkWithTemperature.share_memory
+      ~NetworkWithTemperature.state_dict
+      ~NetworkWithTemperature.to
+      ~NetworkWithTemperature.train
+      ~NetworkWithTemperature.type
+      ~NetworkWithTemperature.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NetworkWithTemperature.default_temperature
+      ~NetworkWithTemperature.dump_patches
+   
+   

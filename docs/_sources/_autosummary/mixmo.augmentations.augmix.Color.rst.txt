@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Color
+================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Color

@@ -1,0 +1,33 @@
+mixmo.loaders.cifar\_dataset
+============================
+
+.. automodule:: mixmo.loaders.cifar_dataset
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      CIFARCorruptions
+      CustomCIFAR10
+      CustomCIFAR100
+   
+   
+
+   
+   
+   
+
+
+

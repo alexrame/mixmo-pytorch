@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.networks.resnet &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../networks.html">mixmo.networks</a> &raquo;</li>
+        
+      <li>mixmo.networks.resnet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.networks.resnet</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Resnet for cifar dataset.</span>
+<span class="sd">Adapted from</span>
+<span class="sd">https://github.com/facebook/fb.resnet.torch</span>
+<span class="sd">and</span>
+<span class="sd">https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py</span>
+<span class="sd">(c) YANG, Wei</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.augmentations</span> <span class="kn">import</span> <span class="n">mixing_blocks</span>
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">torchutils</span>
+<span class="kn">from</span> <span class="nn">mixmo.utils.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
+
+<span class="n">BATCHNORM_MOMENTUM_PREACT</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<div class="viewcode-block" id="PreActBlock"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActBlock.html#mixmo.networks.resnet.PreActBlock">[docs]</a><span class="k">class</span> <span class="nc">PreActBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Pre-activation version of the BasicBlock.&#39;&#39;&#39;</span>
+    <span class="n">expansion</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="PreActBlock.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActBlock.html#mixmo.networks.resnet.PreActBlock.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inplanes</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PreActBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">final_planes</span> <span class="o">=</span> <span class="n">planes</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">expansion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">inplanes</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">inplanes</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">BATCHNORM_MOMENTUM_PREACT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">planes</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">planes</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">BATCHNORM_MOMENTUM_PREACT</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stride</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">inplanes</span> <span class="o">!=</span> <span class="n">final_planes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shortcut</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">inplanes</span><span class="p">,</span> <span class="n">final_planes</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="PreActBlock.forward"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActBlock.html#mixmo.networks.resnet.PreActBlock.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">shortcut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shortcut</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;shortcut&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bn2</span><span class="p">(</span><span class="n">out</span><span class="p">)))</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="n">shortcut</span>
+        <span class="k">return</span> <span class="n">out</span></div></div>
+
+
+<div class="viewcode-block" id="PreActResNet"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet">[docs]</a><span class="k">class</span> <span class="nc">PreActResNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pre-activated ResNet network</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PreActResNet.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_network</span><span class="p">,</span> <span class="n">config_args</span><span class="p">):</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_network</span> <span class="o">=</span> <span class="n">config_network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span> <span class="o">=</span> <span class="n">config_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_define_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_first_layer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_core_network</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_final_classifier</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_weights_resnet</span><span class="p">()</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Features dimension: </span><span class="si">{features_dim}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">features_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PreActResNet._define_config"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet._define_config">[docs]</a>    <span class="k">def</span> <span class="nf">_define_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize network parameters from specified config</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># network config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;num_classes&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_network</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_block</span><span class="p">(</span><span class="n">widen_factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_network</span><span class="p">[</span><span class="s2">&quot;widen_factor&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="PreActResNet._init_block"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet._init_block">[docs]</a>    <span class="k">def</span> <span class="nf">_init_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widen_factor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build list of residual blocks for networks on the CIFAR datasets</span>
+<span class="sd">        Network type specifies number of layers for CIFAR network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">18</span><span class="p">:</span> <span class="n">PreActBlock</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">18</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">assert</span> <span class="n">layers</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">depth</span>
+        <span class="p">],</span> <span class="s1">&#39;invalid depth for ResNet (self.depth should be one of 18, 34, 50, 101, 152, and 200)&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">layers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_block</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">widen_factor</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mi">64</span><span class="p">,</span>
+            <span class="mi">64</span> <span class="o">*</span> <span class="n">widen_factor</span><span class="p">,</span> <span class="mi">128</span> <span class="o">*</span> <span class="n">widen_factor</span><span class="p">,</span>
+            <span class="mi">256</span> <span class="o">*</span> <span class="n">widen_factor</span><span class="p">,</span> <span class="mi">512</span> <span class="o">*</span> <span class="n">widen_factor</span>
+        <span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_first_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_conv1</span><span class="p">(</span><span class="n">nb_input_channel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PreActResNet._init_core_network"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet._init_core_network">[docs]</a>    <span class="k">def</span> <span class="nf">_init_core_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_layer</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the core of the Residual network (residual blocks)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inplanes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_layer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">,</span> <span class="n">planes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                       <span class="n">blocks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_layer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">,</span> <span class="n">planes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                       <span class="n">blocks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_layer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">,</span> <span class="n">planes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                       <span class="n">blocks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_layer</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_layer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">blocks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">expansion</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_conv1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_input_channel</span><span class="p">):</span>
+        <span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span>
+            <span class="n">nb_input_channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nChannels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">conv1</span>
+
+<div class="viewcode-block" id="PreActResNet._make_layer"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet._make_layer">[docs]</a>    <span class="k">def</span> <span class="nf">_make_layer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">block</span><span class="p">,</span>
+        <span class="n">planes</span><span class="p">,</span>
+        <span class="n">blocks</span><span class="p">,</span>
+        <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a layer of successive (residual) blocks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">downsample</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">stride</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">inplanes</span> <span class="o">!=</span> <span class="n">planes</span> <span class="o">*</span> <span class="n">block</span><span class="o">.</span><span class="n">expansion</span><span class="p">:</span>
+            <span class="n">downsample</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inplanes</span><span class="p">,</span> <span class="n">planes</span> <span class="o">*</span> <span class="n">block</span><span class="o">.</span><span class="n">expansion</span><span class="p">,</span>
+                          <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">planes</span> <span class="o">*</span> <span class="n">block</span><span class="o">.</span><span class="n">expansion</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">(</span>
+            <span class="n">inplanes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inplanes</span><span class="p">,</span>
+            <span class="n">planes</span><span class="o">=</span><span class="n">planes</span><span class="p">,</span>
+            <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">,</span>
+            <span class="n">downsample</span><span class="o">=</span><span class="n">downsample</span><span class="p">)</span>
+                      <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inplanes</span> <span class="o">=</span> <span class="n">planes</span> <span class="o">*</span> <span class="n">block</span><span class="o">.</span><span class="n">expansion</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">blocks</span><span class="p">):</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">block</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inplanes</span><span class="p">,</span>
+                    <span class="n">planes</span><span class="p">,))</span>
+
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PreActResNet._init_final_classifier"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet._init_final_classifier">[docs]</a>    <span class="k">def</span> <span class="nf">_init_final_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build linear classification head</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span></div>
+
+    <span class="n">dense_gaussian</span> <span class="o">=</span> <span class="kc">True</span>
+<div class="viewcode-block" id="PreActResNet._init_weights_resnet"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet._init_weights_resnet">[docs]</a>    <span class="k">def</span> <span class="nf">_init_weights_resnet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply specified random initializations to all modules of the network</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">():</span>
+            <span class="n">torchutils</span><span class="o">.</span><span class="n">weights_init_hetruncatednormal</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dense_gaussian</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dense_gaussian</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PreActResNet.forward"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNet.html#mixmo.networks.resnet.PreActResNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="p">{}</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;inference&quot;</span><span class="p">}</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="n">merged_representation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_first_layer</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        <span class="n">extracted_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_core_network</span><span class="p">(</span><span class="n">merged_representation</span><span class="p">)</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_final_classifier</span><span class="p">(</span><span class="n">extracted_features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dict_output</span></div>
+
+    <span class="k">def</span> <span class="nf">_forward_first_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_forward_core_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer4</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_avg</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">avg_pool2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x_avg</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x_avg</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_forward_final_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extracted_features</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">extracted_features</span><span class="p">)</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;logits_0&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">dict_output</span></div>
+
+
+<div class="viewcode-block" id="PreActResNetMixMo"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNetMixMo.html#mixmo.networks.resnet.PreActResNetMixMo">[docs]</a><span class="k">class</span> <span class="nc">PreActResNetMixMo</span><span class="p">(</span><span class="n">PreActResNet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multi-Input Multi-Output ResNet network</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PreActResNetMixMo._init_first_layer"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNetMixMo.html#mixmo.networks.resnet.PreActResNetMixMo._init_first_layer">[docs]</a>    <span class="k">def</span> <span class="nf">_init_first_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the M input heads/encoders</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_conv1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">]):</span>
+            <span class="n">list_conv1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_make_conv1</span><span class="p">(</span><span class="n">nb_input_channel</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">list_conv1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PreActResNetMixMo._init_final_classifier"><a class="viewcode-back" href="../../../_autosummary/mixmo.networks.resnet.PreActResNetMixMo.html#mixmo.networks.resnet.PreActResNetMixMo._init_final_classifier">[docs]</a>    <span class="k">def</span> <span class="nf">_init_final_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the M output heads/classifiers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_fc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">]):</span>
+            <span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span>
+            <span class="n">list_fc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">list_fc</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_forward_first_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">list_lfeats</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Embed the M inputs into the shared space</span>
+        <span class="k">for</span> <span class="n">num_member</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">pixels_member</span> <span class="o">=</span> <span class="n">pixels</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pixels_member</span> <span class="o">=</span> <span class="n">pixels</span><span class="p">[:,</span> <span class="mi">3</span><span class="o">*</span><span class="n">num_member</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">num_member</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="n">list_lfeats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_conv1</span><span class="p">[</span><span class="n">num_member</span><span class="p">](</span><span class="n">pixels_member</span><span class="p">))</span>
+
+        <span class="c1"># Mix the M inputs in the shared space</span>
+        <span class="n">merged_representation</span> <span class="o">=</span> <span class="n">mixing_blocks</span><span class="o">.</span><span class="n">mix_manifolds</span><span class="p">(</span><span class="n">list_lfeats</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">merged_representation</span>
+
+    <span class="k">def</span> <span class="nf">_forward_final_classifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extracted_features</span><span class="p">):</span>
+        <span class="n">dict_output</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># compute individual logits</span>
+        <span class="k">for</span> <span class="n">num_member</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">]):</span>
+            <span class="n">logits_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_fc</span><span class="p">[</span><span class="n">num_member</span><span class="p">](</span><span class="n">extracted_features</span><span class="p">)</span>
+            <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;logits_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_member</span><span class="p">)]</span> <span class="o">=</span> <span class="n">logits_n</span>
+
+        <span class="c1"># compute ensemble logits by averaging</span>
+        <span class="n">_list_logits</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;logits_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_member</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">num_member</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">_list_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dict_output</span></div>
+
+
+<span class="n">resnet_network_factory</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># For TinyImageNet</span>
+    <span class="s2">&quot;resnet&quot;</span><span class="p">:</span> <span class="n">PreActResNet</span><span class="p">,</span>
+    <span class="s2">&quot;resnetmixmo&quot;</span><span class="p">:</span> <span class="n">PreActResNetMixMo</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

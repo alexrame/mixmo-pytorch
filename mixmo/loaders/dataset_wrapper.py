@@ -1,3 +1,7 @@
+"""
+Dataset wrappers for multi-input multi-output models with data augmentation
+"""
+
 import math
 import torch
 from torch.utils.data.dataset import Dataset

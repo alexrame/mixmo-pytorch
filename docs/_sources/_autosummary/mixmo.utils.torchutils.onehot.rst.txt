@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.onehot
+=============================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: onehot

@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.\_gaussian\_blur\_kernel
+===========================================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: _gaussian_blur_kernel

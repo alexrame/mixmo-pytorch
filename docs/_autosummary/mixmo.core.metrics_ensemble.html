@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.core.metrics_ensemble &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mixmo.core.metrics_ensemble._process_predictions" href="mixmo.core.metrics_ensemble._process_predictions.html" />
+    <link rel="prev" title="mixmo.core.loss.WrapperLoss" href="mixmo.core.loss.WrapperLoss.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mixmo.html">mixmo</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mixmo.augmentations.html">mixmo.augmentations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="mixmo.core.html">mixmo.core</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mixmo.core.loss.html">mixmo.core.loss</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mixmo.core.metrics_ensemble</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.core.metrics_ensemble._process_predictions.html">mixmo.core.metrics_ensemble._process_predictions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.core.metrics_ensemble.compute_mean_without_diagonal.html">mixmo.core.metrics_ensemble.compute_mean_without_diagonal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.core.metrics_ensemble.compute_pairwise_diversity.html">mixmo.core.metrics_ensemble.compute_pairwise_diversity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.core.metrics_ensemble.get_accuracy_multi.html">mixmo.core.metrics_ensemble.get_accuracy_multi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.core.metrics_ensemble.ratio_errors.html">mixmo.core.metrics_ensemble.ratio_errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.core.metrics_ensemble.MetricsEnsemble.html">mixmo.core.metrics_ensemble.MetricsEnsemble</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.core.metrics_wrapper.html">mixmo.core.metrics_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.core.optimizer.html">mixmo.core.optimizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.core.scheduler.html">mixmo.core.scheduler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.core.temperature_scaling.html">mixmo.core.temperature_scaling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.learners.html">mixmo.learners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.loaders.html">mixmo.loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.networks.html">mixmo.networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.utils.html">mixmo.utils</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="mixmo.html">mixmo</a> &raquo;</li>
+        
+          <li><a href="mixmo.core.html">mixmo.core</a> &raquo;</li>
+        
+      <li>mixmo.core.metrics_ensemble</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary/mixmo.core.metrics_ensemble.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-mixmo.core.metrics_ensemble">
+<span id="mixmo-core-metrics-ensemble"></span><h1>mixmo.core.metrics_ensemble<a class="headerlink" href="#module-mixmo.core.metrics_ensemble" title="Permalink to this headline">¶</a></h1>
+<p>Ensembling metrics
+Inspired from
+* <a class="reference external" href="https://github.com/kbogas/EnsembleDiversityTests/blob/master/EnsembleDiversityTests.py">https://github.com/kbogas/EnsembleDiversityTests/blob/master/EnsembleDiversityTests.py</a>
+* <a class="reference external" href="https://github.com/scikit-learn-contrib/DESlib">https://github.com/scikit-learn-contrib/DESlib</a></p>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.core.metrics_ensemble._process_predictions.html#mixmo.core.metrics_ensemble._process_predictions" title="mixmo.core.metrics_ensemble._process_predictions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_process_predictions</span></code></a>(y, y_pred1, y_pred2)</p></td>
+<td><p>Pre-process the predictions of a pair of base classifiers for the computation of the diversity measures</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.core.metrics_ensemble.compute_mean_without_diagonal.html#mixmo.core.metrics_ensemble.compute_mean_without_diagonal" title="mixmo.core.metrics_ensemble.compute_mean_without_diagonal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mean_without_diagonal</span></code></a>(matrix)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.core.metrics_ensemble.compute_pairwise_diversity.html#mixmo.core.metrics_ensemble.compute_pairwise_diversity" title="mixmo.core.metrics_ensemble.compute_pairwise_diversity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_pairwise_diversity</span></code></a>(targets, …)</p></td>
+<td><p>Computes the pairwise diversity matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.core.metrics_ensemble.get_accuracy_multi.html#mixmo.core.metrics_ensemble.get_accuracy_multi" title="mixmo.core.metrics_ensemble.get_accuracy_multi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_accuracy_multi</span></code></a>(predictions, y_true)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.core.metrics_ensemble.ratio_errors.html#mixmo.core.metrics_ensemble.ratio_errors" title="mixmo.core.metrics_ensemble.ratio_errors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ratio_errors</span></code></a>(y, y_pred1, y_pred2)</p></td>
+<td><p>Calculates Ratio of errors diversity measure between a pair of classifiers.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.core.metrics_ensemble.MetricsEnsemble.html#mixmo.core.metrics_ensemble.MetricsEnsemble" title="mixmo.core.metrics_ensemble.MetricsEnsemble"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricsEnsemble</span></code></a>(predictions, names, true)</p></td>
+<td><p>Class Wrapper to get Diversity Measures over collection of predictions. :param &#64;predictions: list of lists. Each sublist contains the predictions                      of a classifier :param &#64;names: list of strings. Each string is the name of the classifier. :param &#64;true: list of labels. Each label is the truth label.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mixmo.core.metrics_ensemble._process_predictions.html" class="btn btn-neutral float-right" title="mixmo.core.metrics_ensemble._process_predictions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mixmo.core.loss.WrapperLoss.html" class="btn btn-neutral float-left" title="mixmo.core.loss.WrapperLoss" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

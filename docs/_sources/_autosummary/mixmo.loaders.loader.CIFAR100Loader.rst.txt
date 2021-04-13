@@ -1,0 +1,35 @@
+﻿mixmo.loaders.loader.CIFAR100Loader
+===================================
+
+.. currentmodule:: mixmo.loaders.loader
+
+.. autoclass:: CIFAR100Loader
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CIFAR100Loader.__init__
+      ~CIFAR100Loader.make_corruptions_test_dataset
+      ~CIFAR100Loader.make_standard_loader
+      ~CIFAR100Loader.properties
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CIFAR100Loader.corruptions_data_dir
+      ~CIFAR100Loader.data_dir
+   
+   

@@ -1,0 +1,35 @@
+mixmo.augmentations.standard\_augmentations
+===========================================
+
+.. automodule:: mixmo.augmentations.standard_augmentations
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_default_composed_augmentations
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      CustomCompose
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+mixmo.core.metrics\_wrapper.show\_metrics
+=========================================
+
+.. currentmodule:: mixmo.core.metrics_wrapper
+
+.. autofunction:: show_metrics

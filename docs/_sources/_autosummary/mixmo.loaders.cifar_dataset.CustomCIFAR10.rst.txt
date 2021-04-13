@@ -1,0 +1,39 @@
+﻿mixmo.loaders.cifar\_dataset.CustomCIFAR10
+==========================================
+
+.. currentmodule:: mixmo.loaders.cifar_dataset
+
+.. autoclass:: CustomCIFAR10
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CustomCIFAR10.__init__
+      ~CustomCIFAR10.download
+      ~CustomCIFAR10.extra_repr
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CustomCIFAR10.base_folder
+      ~CustomCIFAR10.filename
+      ~CustomCIFAR10.meta
+      ~CustomCIFAR10.test_list
+      ~CustomCIFAR10.tgz_md5
+      ~CustomCIFAR10.train_list
+      ~CustomCIFAR10.url
+   
+   

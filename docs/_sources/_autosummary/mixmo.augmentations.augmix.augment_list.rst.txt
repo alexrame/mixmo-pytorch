@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.augment\_list
+========================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: augment_list

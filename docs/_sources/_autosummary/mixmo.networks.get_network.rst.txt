@@ -1,0 +1,6 @@
+mixmo.networks.get\_network
+===========================
+
+.. currentmodule:: mixmo.networks
+
+.. autofunction:: get_network

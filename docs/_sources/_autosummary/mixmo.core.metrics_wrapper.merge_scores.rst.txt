@@ -1,0 +1,6 @@
+mixmo.core.metrics\_wrapper.merge\_scores
+=========================================
+
+.. currentmodule:: mixmo.core.metrics_wrapper
+
+.. autofunction:: merge_scores

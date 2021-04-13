@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.weights\_init\_hetruncatednormal
+=======================================================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: weights_init_hetruncatednormal

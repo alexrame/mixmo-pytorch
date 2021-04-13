@@ -1,7 +1,9 @@
-# Implementation following setups from PuzzleMix authors
-# According to the seminal code: https://github.com/google-research/augmix/blob/master/cifar.py
-# This code structure is borrowed from:
-# https://github.com/ildoonet/pytorch-randaugment/blob/616ef12a5176169b4e1e645728f3dedd1a5a148e/RandAugment/augmentations.py
+"""
+Implementation following setups from PuzzleMix authors
+According to the seminal code: https://github.com/google-research/augmix/blob/master/cifar.py
+This code structure is borrowed from:
+https://github.com/ildoonet/pytorch-randaugment/blob/616ef12a5176169b4e1e645728f3dedd1a5a148e/RandAugment/augmentations.py
+"""
 
 import random
 

@@ -1,0 +1,6 @@
+mixmo.utils.visualize.show\_batch
+=================================
+
+.. currentmodule:: mixmo.utils.visualize
+
+.. autofunction:: show_batch

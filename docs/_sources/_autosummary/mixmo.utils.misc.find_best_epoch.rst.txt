@@ -1,0 +1,6 @@
+mixmo.utils.misc.find\_best\_epoch
+==================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: find_best_epoch

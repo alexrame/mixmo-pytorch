@@ -1,0 +1,6 @@
+mixmo.core.metrics\_wrapper.get\_tace\_bayesgroup
+=================================================
+
+.. currentmodule:: mixmo.core.metrics_wrapper
+
+.. autofunction:: get_tace_bayesgroup

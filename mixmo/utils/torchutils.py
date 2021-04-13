@@ -1,3 +1,7 @@
+"""
+General tensor manipulation utility functions (initializations, permutations, one hot)
+"""
+
 import math
 import torch
 

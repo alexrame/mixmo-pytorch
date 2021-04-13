@@ -1,0 +1,6 @@
+mixmo.utils.misc.ifnotfound\_update
+===================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: ifnotfound_update

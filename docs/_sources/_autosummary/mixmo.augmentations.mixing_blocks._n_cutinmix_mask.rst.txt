@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.\_n\_cutinmix\_mask
+======================================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: _n_cutinmix_mask

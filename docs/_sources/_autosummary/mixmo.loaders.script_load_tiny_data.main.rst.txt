@@ -1,0 +1,6 @@
+mixmo.loaders.script\_load\_tiny\_data.main
+===========================================
+
+.. currentmodule:: mixmo.loaders.script_load_tiny_data
+
+.. autofunction:: main

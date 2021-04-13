@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.core.metrics_ensemble &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.core.metrics_ensemble</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.core.metrics_ensemble</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Ensembling metrics</span>
+<span class="sd">Inspired from</span>
+<span class="sd">* https://github.com/kbogas/EnsembleDiversityTests/blob/master/EnsembleDiversityTests.py</span>
+<span class="sd">* https://github.com/scikit-learn-contrib/DESlib</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">misc</span>
+<span class="kn">from</span> <span class="nn">mixmo.utils.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MetricsEnsemble"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.MetricsEnsemble.html#mixmo.core.metrics_ensemble.MetricsEnsemble">[docs]</a><span class="k">class</span> <span class="nc">MetricsEnsemble</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class Wrapper to get Diversity Measures over collection of predictions.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        @predictions: list of lists. Each sublist contains the predictions</span>
+<span class="sd">                      of a classifier</span>
+<span class="sd">        @names: list of strings. Each string is the name of the classifier.</span>
+<span class="sd">        @true: list of labels. Each label is the truth label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MetricsEnsemble.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.MetricsEnsemble.html#mixmo.core.metrics_ensemble.MetricsEnsemble.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">true</span><span class="p">):</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">true</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">true</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s1">&#39;Number of classifiers is different than number </span><span class="se">\</span>
+<span class="s1">                                  of names. </span><span class="si">%d</span><span class="s1"> != </span><span class="si">%d</span><span class="s1">.&#39;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">predict</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">predict</span><span class="p">)</span> <span class="o">!=</span> <span class="n">N</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                    <span class="s1">&#39;Number of predictions of classifier </span><span class="si">%s</span><span class="s1"> is different then the number of true labels. </span><span class="si">%d</span><span class="s1"> != </span><span class="si">%d</span><span class="s1">&#39;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <span class="o">%</span> <span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">predict</span><span class="p">),</span> <span class="n">N</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">labels</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">predict</span><span class="p">)):</span>
+                <span class="kn">import</span> <span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                    <span class="s1">&#39;Label in predictions of </span><span class="si">%s</span><span class="s1"> not in truth set.&#39;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <span class="o">%</span> <span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">true</span> <span class="o">=</span> <span class="n">true</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span></div>
+
+    <span class="k">def</span> <span class="nf">get_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({})</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">clean_update</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_diversity_ratioerrors</span><span class="p">(</span><span class="n">print_flag</span><span class="o">=</span><span class="n">print_flag</span><span class="p">))</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">clean_update</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_individualaccuracies</span><span class="p">(</span><span class="n">print_flag</span><span class="o">=</span><span class="n">print_flag</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">stats</span>
+
+    <span class="k">def</span> <span class="nf">get_diversity_ratioerrors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">prediction_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">))</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({})</span>
+        <span class="k">if</span> <span class="n">print_flag</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;### Pairwise Diversity Metrics: ###&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">diversity_name</span><span class="p">,</span> <span class="n">diversity_func</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;diversity_ratioerrors&quot;</span><span class="p">,</span> <span class="n">ratio_errors</span><span class="p">),</span>
+                <span class="p">]:</span>
+            <span class="n">diversity_matrix</span> <span class="o">=</span> <span class="n">compute_pairwise_diversity</span><span class="p">(</span>
+                <span class="n">targets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">true</span><span class="p">,</span>
+                <span class="n">prediction_matrix</span><span class="o">=</span><span class="n">prediction_matrix</span><span class="p">,</span>
+                <span class="n">diversity_func</span><span class="o">=</span><span class="n">diversity_func</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">compute_mean_without_diagonal</span><span class="p">(</span><span class="n">diversity_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">diversity_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">print_flag</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Avg. </span><span class="si">{</span><span class="n">diversity_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span>
+
+
+<div class="viewcode-block" id="MetricsEnsemble.get_individualaccuracies"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.MetricsEnsemble.html#mixmo.core.metrics_ensemble.MetricsEnsemble.get_individualaccuracies">[docs]</a>    <span class="k">def</span> <span class="nf">get_individualaccuracies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meanaccuracy</span><span class="p">,</span> <span class="n">accuracies</span> <span class="o">=</span> <span class="n">get_accuracy_multi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">true</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">print_flag</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracies: </span><span class="si">{</span><span class="n">accuracies</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean accuracy: </span><span class="si">{</span><span class="n">meanaccuracy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;accuracy_mean&quot;</span><span class="p">:</span> <span class="n">meanaccuracy</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">accuracy</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">accuracies</span><span class="p">):</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;accuracy_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">accuracy</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">accuracy</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">05.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">accuracy</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MetricsEnsemble.help"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.MetricsEnsemble.html#mixmo.core.metrics_ensemble.MetricsEnsemble.help">[docs]</a>    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just a helper function to print the class docstring.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span></div></div>
+
+
+<div class="viewcode-block" id="get_accuracy_multi"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.get_accuracy_multi.html#mixmo.core.metrics_ensemble.get_accuracy_multi">[docs]</a><span class="k">def</span> <span class="nf">get_accuracy_multi</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">y_true</span><span class="p">):</span>
+
+    <span class="n">num_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+    <span class="n">accurate_predictions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_labels</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pred_i</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pred</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">y_true</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">accurate_predictions</span><span class="p">[</span><span class="n">pred_i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">accuracies</span> <span class="o">=</span> <span class="p">[</span><span class="n">accurate</span><span class="o">/</span><span class="n">num_labels</span> <span class="k">for</span> <span class="n">accurate</span> <span class="ow">in</span> <span class="n">accurate_predictions</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accuracies</span><span class="p">),</span> <span class="n">accuracies</span></div>
+
+
+
+<div class="viewcode-block" id="_process_predictions"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble._process_predictions.html#mixmo.core.metrics_ensemble._process_predictions">[docs]</a><span class="k">def</span> <span class="nf">_process_predictions</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred1</span><span class="p">,</span> <span class="n">y_pred2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pre-process the predictions of a pair of base classifiers for the</span>
+<span class="sd">    computation of the diversity measures</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array of shape = [n_samples]:</span>
+<span class="sd">        class labels of each sample.</span>
+
+<span class="sd">    y_pred1 : array of shape = [n_samples]:</span>
+<span class="sd">              predicted class labels by the classifier 1 for each sample.</span>
+
+<span class="sd">    y_pred2 : array of shape = [n_samples]:</span>
+<span class="sd">              predicted class labels by the classifier 2 for each sample.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    N00 : Percentage of samples that both classifiers predict the wrong label</span>
+
+<span class="sd">    N10 : Percentage of samples that only classifier 2 predicts the wrong label</span>
+
+<span class="sd">    N10 : Percentage of samples that only classifier 1 predicts the wrong label</span>
+
+<span class="sd">    N11 : Percentage of samples that both classifiers predict the correct label</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size_y</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">size_y</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">size_y</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The vector with class labels must have the same size.&#39;</span><span class="p">)</span>
+
+    <span class="n">N00</span><span class="p">,</span> <span class="n">N10</span><span class="p">,</span> <span class="n">N01</span><span class="p">,</span> <span class="n">N11</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size_y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">y_pred1</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y_pred2</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+            <span class="n">N11</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="n">y_pred1</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y_pred2</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">!=</span> <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+            <span class="n">N10</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="n">y_pred1</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">!=</span> <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y_pred2</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+            <span class="n">N01</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">N00</span> <span class="o">+=</span> <span class="mf">1.0</span>
+
+    <span class="k">return</span> <span class="n">N00</span> <span class="o">/</span> <span class="n">size_y</span><span class="p">,</span> <span class="n">N10</span> <span class="o">/</span> <span class="n">size_y</span><span class="p">,</span> <span class="n">N01</span> <span class="o">/</span> <span class="n">size_y</span><span class="p">,</span> <span class="n">N11</span> <span class="o">/</span> <span class="n">size_y</span></div>
+
+
+<div class="viewcode-block" id="ratio_errors"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.ratio_errors.html#mixmo.core.metrics_ensemble.ratio_errors">[docs]</a><span class="k">def</span> <span class="nf">ratio_errors</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred1</span><span class="p">,</span> <span class="n">y_pred2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates Ratio of errors diversity measure between a pair of</span>
+<span class="sd">    classifiers. A higher value means that the base classifiers are less likely</span>
+<span class="sd">    to make the same errors. The ratio must be maximized for a higher diversity</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array of shape = [n_samples]:</span>
+<span class="sd">        class labels of each sample.</span>
+
+<span class="sd">    y_pred1 : array of shape = [n_samples]:</span>
+<span class="sd">              predicted class labels by the classifier 1 for each sample.</span>
+
+<span class="sd">    y_pred2 : array of shape = [n_samples]:</span>
+<span class="sd">              predicted class labels by the classifier 2 for each sample.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ratio : The q-statistic measure between two classifiers</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Aksela, Matti. &quot;Comparison of classifier selection methods for improving</span>
+<span class="sd">    committee performance.&quot;</span>
+<span class="sd">    Multiple Classifier Systems (2003): 159-159.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N00</span><span class="p">,</span> <span class="n">N10</span><span class="p">,</span> <span class="n">N01</span><span class="p">,</span> <span class="n">N11</span> <span class="o">=</span> <span class="n">_process_predictions</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred1</span><span class="p">,</span> <span class="n">y_pred2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">N00</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No shared errors !&quot;</span><span class="p">)</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">N01</span> <span class="o">+</span> <span class="n">N10</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">N01</span> <span class="o">+</span> <span class="n">N10</span><span class="p">)</span> <span class="o">/</span> <span class="n">N00</span>
+    <span class="k">return</span> <span class="n">ratio</span></div>
+
+
+<div class="viewcode-block" id="compute_pairwise_diversity"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.compute_pairwise_diversity.html#mixmo.core.metrics_ensemble.compute_pairwise_diversity">[docs]</a><span class="k">def</span> <span class="nf">compute_pairwise_diversity</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">prediction_matrix</span><span class="p">,</span> <span class="n">diversity_func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the pairwise diversity matrix.</span>
+
+<span class="sd">     Parameters</span>
+<span class="sd">     ----------</span>
+<span class="sd">     targets : array of shape = [n_samples]:</span>
+<span class="sd">        Class labels of each sample in X.</span>
+
+<span class="sd">     prediction_matrix : array of shape = [n_samples, n_classifiers]:</span>
+<span class="sd">        Predicted class labels for each classifier in the pool</span>
+
+<span class="sd">     diversity_func : Function</span>
+<span class="sd">        Function used to estimate the pairwise diversity</span>
+
+<span class="sd">     Returns</span>
+<span class="sd">     -------</span>
+<span class="sd">     diversity : array of shape = [n_classifiers]</span>
+<span class="sd">        The average pairwise diversity matrix calculated for the pool of</span>
+<span class="sd">        classifiers</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="n">n_classifiers</span> <span class="o">=</span> <span class="n">prediction_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">diversity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_classifiers</span><span class="p">,</span> <span class="n">n_classifiers</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">clf_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_classifiers</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">clf_index2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clf_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_classifiers</span><span class="p">):</span>
+            <span class="n">this_diversity</span> <span class="o">=</span> <span class="n">diversity_func</span><span class="p">(</span>
+                <span class="n">targets</span><span class="p">,</span> <span class="n">prediction_matrix</span><span class="p">[:,</span> <span class="n">clf_index</span><span class="p">],</span> <span class="n">prediction_matrix</span><span class="p">[:,</span> <span class="n">clf_index2</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">diversity_matrix</span><span class="p">[</span><span class="n">clf_index</span><span class="p">,</span> <span class="n">clf_index2</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_diversity</span>
+            <span class="n">diversity_matrix</span><span class="p">[</span><span class="n">clf_index2</span><span class="p">,</span> <span class="n">clf_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_diversity</span>
+
+    <span class="k">return</span> <span class="n">diversity_matrix</span></div>
+
+
+<div class="viewcode-block" id="compute_mean_without_diagonal"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_ensemble.compute_mean_without_diagonal.html#mixmo.core.metrics_ensemble.compute_mean_without_diagonal">[docs]</a><span class="k">def</span> <span class="nf">compute_mean_without_diagonal</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

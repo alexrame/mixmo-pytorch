@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.utils.misc &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.utils.misc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.utils.misc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility functions for random sampling, type checking, dictionary handling,</span>
+<span class="sd">checkpoint parsing and configuration</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">csv</span> <span class="kn">import</span> <span class="n">DictWriter</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+
+<span class="kn">from</span> <span class="nn">mixmo.utils.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sample_lams"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.sample_lams.html#mixmo.utils.misc.sample_lams">[docs]</a><span class="k">def</span> <span class="nf">sample_lams</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sampling lam ratios for mixing from a symmetric Dirichlet distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">beta</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">get_nprandom</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">beta</span><span class="p">),</span> <span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="random_lower_than"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.random_lower_than.html#mixmo.utils.misc.random_lower_than">[docs]</a><span class="k">def</span> <span class="nf">random_lower_than</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uniform probability check</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">prob</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">get_random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">prob</span></div>
+
+<div class="viewcode-block" id="get_random"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_random.html#mixmo.utils.misc.get_random">[docs]</a><span class="k">def</span> <span class="nf">get_random</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    (Possibly seeded) random.Random instantiation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span>
+    <span class="k">return</span> <span class="n">myrandom</span></div>
+
+
+<div class="viewcode-block" id="get_nprandom"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_nprandom.html#mixmo.utils.misc.get_nprandom">[docs]</a><span class="k">def</span> <span class="nf">get_nprandom</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    (Possibly seeded) np.random instantiation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mynprandom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mynprandom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span>
+    <span class="k">return</span> <span class="n">mynprandom</span></div>
+
+
+
+<div class="viewcode-block" id="is_nan"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.is_nan.html#mixmo.utils.misc.is_nan">[docs]</a><span class="k">def</span> <span class="nf">is_nan</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">!=</span> <span class="n">num</span></div>
+
+
+<div class="viewcode-block" id="is_none"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.is_none.html#mixmo.utils.misc.is_none">[docs]</a><span class="k">def</span> <span class="nf">is_none</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;null&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="is_zero"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.is_zero.html#mixmo.utils.misc.is_zero">[docs]</a><span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">num</span>  <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;null&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="is_float"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.is_float.html#mixmo.utils.misc.is_float">[docs]</a><span class="k">def</span> <span class="nf">is_float</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="is_int"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.is_int.html#mixmo.utils.misc.is_int">[docs]</a><span class="k">def</span> <span class="nf">is_int</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">is_float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">))</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">output</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="set_determ"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.set_determ.html#mixmo.utils.misc.set_determ">[docs]</a><span class="k">def</span> <span class="nf">set_determ</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Seeding function for reproducibility</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set seed: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+    <span class="c1"># torch.backends.cudnn.benchmark = True</span>
+    <span class="c1"># torch.backends.cudnn.deterministic = True</span>
+
+
+<div class="viewcode-block" id="clean_startswith"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.clean_startswith.html#mixmo.utils.misc.clean_startswith">[docs]</a><span class="k">def</span> <span class="nf">clean_startswith</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="ifnotfound_update"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.ifnotfound_update.html#mixmo.utils.misc.ifnotfound_update">[docs]</a><span class="k">def</span> <span class="nf">ifnotfound_update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">):</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ifnotfound&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="clean_update"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.clean_update.html#mixmo.utils.misc.clean_update">[docs]</a><span class="k">def</span> <span class="nf">clean_update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">):</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;clean&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">old_dict</span></div>
+
+
+<div class="viewcode-block" id="dirty_update"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.dirty_update.html#mixmo.utils.misc.dirty_update">[docs]</a><span class="k">def</span> <span class="nf">dirty_update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">):</span>
+    <span class="n">update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;dirty&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="update"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.update.html#mixmo.utils.misc.update">[docs]</a><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">old_dict</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update a dictionary in three possible ways depending on situation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;clean&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">old_dict</span><span class="p">,</span> <span class="n">key</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;dirty&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">old_dict</span><span class="p">,</span> <span class="n">key</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;ifnotfound&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">old_dict</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="n">old_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="csv_writter"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.csv_writter.html#mixmo.utils.misc.csv_writter">[docs]</a><span class="k">def</span> <span class="nf">csv_writter</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dic</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility function to write dictionaries to a csv file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the file already exists</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">append_mode</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">rw_mode</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">append_mode</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">rw_mode</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span>
+
+    <span class="c1"># Write dic</span>
+    <span class="k">if</span> <span class="n">append_mode</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="n">dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">field_names</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="n">dict_of_elem</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dic</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">rw_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+        <span class="n">dict_writer</span> <span class="o">=</span> <span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">field_names</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">append_mode</span><span class="p">:</span>
+            <span class="n">dict_writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+        <span class="c1"># Do not write header in append mode</span>
+        <span class="n">dict_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">dict_of_elem</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_print_dict"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc._print_dict.html#mixmo.utils.misc._print_dict">[docs]</a><span class="k">def</span> <span class="nf">_print_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    function that print args dictionaries in a beautiful way</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">col_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">word</span><span class="p">))</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">_dict</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+        <span class="n">str_print</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_dict</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
+        <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">col_width</span><span class="p">),</span> <span class="n">str_print</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_str</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">40</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_dict"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.print_dict.html#mixmo.utils.misc.print_dict">[docs]</a><span class="k">def</span> <span class="nf">print_dict</span><span class="p">(</span><span class="n">logs_dict</span><span class="p">):</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">arg</span><span class="p">:</span> <span class="n">logs_dict</span><span class="p">[</span><span class="n">arg</span><span class="p">][</span><span class="s2">&quot;string&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">logs_dict</span><span class="p">}</span>
+    <span class="n">_print_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="print_args"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.print_args.html#mixmo.utils.misc.print_args">[docs]</a><span class="k">def</span> <span class="nf">print_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">_dict</span> <span class="o">=</span> <span class="n">args</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">args</span><span class="o">.</span><span class="vm">__dict__</span>
+    <span class="n">_print_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_yaml"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.load_yaml.html#mixmo.utils.misc.load_yaml">[docs]</a><span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">config_args</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config_args</span></div>
+
+
+<div class="viewcode-block" id="load_config_yaml"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.load_config_yaml.html#mixmo.utils.misc.load_config_yaml">[docs]</a><span class="k">def</span> <span class="nf">load_config_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">config_args</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;training&quot;</span><span class="p">][</span><span class="s2">&quot;config_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">return</span> <span class="n">config_args</span></div>
+
+
+<div class="viewcode-block" id="find_best_epoch"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.find_best_epoch.html#mixmo.utils.misc.find_best_epoch">[docs]</a><span class="k">def</span> <span class="nf">find_best_epoch</span><span class="p">(</span><span class="n">criteria</span><span class="p">,</span> <span class="n">logs_file</span><span class="p">,</span> <span class="n">minepoch</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check the log files for the best epoch according to a specific criterion</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">criteria</span> <span class="o">==</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;epoch&quot;</span>
+        <span class="n">sorting</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">sorting</span> <span class="o">=</span> <span class="n">criteria</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sorting</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">sorting</span><span class="p">)</span>
+
+    <span class="n">best</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">final_epoch</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">best_epoch</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;logs_file: </span><span class="si">{logs_file}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logs_file</span><span class="o">=</span><span class="n">logs_file</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">logs_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_stats</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f_stats</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">irow</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_logs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_logs</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">new_logs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="s2">&quot;epoch&quot;</span> <span class="ow">in</span> <span class="n">new_logs</span><span class="p">:</span>
+                    <span class="n">epoch</span> <span class="o">=</span> <span class="n">new_logs</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">epoch</span> <span class="o">=</span> <span class="n">irow</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">is_int</span><span class="p">(</span><span class="n">epoch</span><span class="p">):</span>
+                    <span class="n">final_epoch</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">epoch</span><span class="p">),</span> <span class="n">final_epoch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">new_logs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;general/checkpoint_saved&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">minepoch</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">best_epoch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">best_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+                    <span class="n">best</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">elif</span> <span class="n">sorting</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">best</span> <span class="o">&lt;=</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">best_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+                        <span class="n">best</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">elif</span> <span class="n">sorting</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">best</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">best_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+                        <span class="n">best</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">new_logs</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best epoch: </span><span class="si">{</span><span class="n">best_epoch</span><span class="si">}</span><span class="s2"> until: </span><span class="si">{</span><span class="n">final_epoch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">best_epoch</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_output_folder_from_config"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_output_folder_from_config.html#mixmo.utils.misc.get_output_folder_from_config">[docs]</a><span class="k">def</span> <span class="nf">get_output_folder_from_config</span><span class="p">(</span><span class="n">saveplace</span><span class="p">,</span> <span class="n">config_path</span><span class="p">):</span>
+    <span class="n">config_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">saveplace</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span></div>
+
+
+<span class="n">PREFIX_CHECKPOINTS</span> <span class="o">=</span> <span class="s2">&quot;checkpoint_epoch&quot;</span>
+
+<div class="viewcode-block" id="get_previous_ckpt"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_previous_ckpt.html#mixmo.utils.misc.get_previous_ckpt">[docs]</a><span class="k">def</span> <span class="nf">get_previous_ckpt</span><span class="p">(</span><span class="n">output_folder</span><span class="p">):</span>
+    <span class="n">list_previous_epochs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">output_folder</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">PREFIX_CHECKPOINTS</span> <span class="ow">in</span> <span class="n">f</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">list_previous_epochs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">last_ckpt</span> <span class="o">=</span> <span class="n">get_model_path</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">list_previous_epochs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">last_ckpt</span></div>
+
+
+<div class="viewcode-block" id="get_model_path"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_model_path.html#mixmo.utils.misc.get_model_path">[docs]</a><span class="k">def</span> <span class="nf">get_model_path</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+    <span class="n">ckpt_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">PREFIX_CHECKPOINTS</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">epoch</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">.ckpt&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ckpt_path</span></div>
+
+
+<div class="viewcode-block" id="get_checkpoint"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_checkpoint.html#mixmo.utils.misc.get_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">get_checkpoint</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">==</span> <span class="s2">&quot;best&quot;</span><span class="p">:</span>
+        <span class="n">logs_file</span> <span class="o">=</span> <span class="n">get_logs_path</span><span class="p">(</span><span class="n">output_folder</span><span class="p">)</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="n">find_best_epoch</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;test/accuracy:max&quot;</span><span class="p">,</span> <span class="n">logs_file</span><span class="o">=</span><span class="n">logs_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">is_int</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+
+    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">get_model_path</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Best checkpoint: </span><span class="si">{</span><span class="n">checkpoint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">checkpoint</span></div>
+
+
+<div class="viewcode-block" id="get_logs_path"><a class="viewcode-back" href="../../../_autosummary/mixmo.utils.misc.get_logs_path.html#mixmo.utils.misc.get_logs_path">[docs]</a><span class="k">def</span> <span class="nf">get_logs_path</span><span class="p">(</span><span class="n">output_folder</span><span class="p">):</span>
+    <span class="n">logs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span>  <span class="s2">&quot;logs.csv&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logs_path</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

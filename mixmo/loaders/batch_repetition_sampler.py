@@ -1,3 +1,6 @@
+"""
+Sampler definition for multi-input models
+"""
 import torch
 import random
 

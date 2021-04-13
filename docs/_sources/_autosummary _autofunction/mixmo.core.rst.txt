@@ -1,0 +1,36 @@
+mixmo.core
+==========
+
+.. automodule:: mixmo.core
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   mixmo.core.loss
+   mixmo.core.metrics_ensemble
+   mixmo.core.metrics_wrapper
+   mixmo.core.optimizer
+   mixmo.core.scheduler
+   mixmo.core.temperature_scaling
+

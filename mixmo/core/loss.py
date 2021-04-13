@@ -1,3 +1,6 @@
+"""
+Base loss definitions
+"""
 from collections import OrderedDict
 import copy
 import torch

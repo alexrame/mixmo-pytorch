@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.TranslateY
+=====================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: TranslateY

@@ -1,0 +1,6 @@
+mixmo.loaders.get\_loader
+=========================
+
+.. currentmodule:: mixmo.loaders
+
+.. autofunction:: get_loader

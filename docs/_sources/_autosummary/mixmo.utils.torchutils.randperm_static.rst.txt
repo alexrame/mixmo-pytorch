@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.randperm\_static
+=======================================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: randperm_static

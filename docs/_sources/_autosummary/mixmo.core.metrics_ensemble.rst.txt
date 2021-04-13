@@ -1,0 +1,42 @@
+﻿mixmo.core.metrics\_ensemble
+============================
+
+.. automodule:: mixmo.core.metrics_ensemble
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      _process_predictions
+      compute_mean_without_diagonal
+      compute_pairwise_diversity
+      get_accuracy_multi
+      ratio_errors
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      MetricsEnsemble
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,31 @@
+mixmo.loaders.script\_load\_tiny\_data
+======================================
+
+.. automodule:: mixmo.loaders.script_load_tiny_data
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      create_val_folder
+      main
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

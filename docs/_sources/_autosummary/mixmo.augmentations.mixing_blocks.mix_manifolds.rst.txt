@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.mix\_manifolds
+=================================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: mix_manifolds

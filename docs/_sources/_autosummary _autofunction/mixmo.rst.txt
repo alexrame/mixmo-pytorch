@@ -1,0 +1,35 @@
+﻿mixmo
+=====
+
+.. automodule:: mixmo
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   mixmo.augmentations
+   mixmo.core
+   mixmo.loaders
+   mixmo.networks
+   mixmo.utils
+

@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.augmentations.mixing_blocks &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.augmentations.mixing_blocks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.augmentations.mixing_blocks</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mixing blocks inspired from several standard mixing sample data augmentations</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">misc</span>
+
+
+<div class="viewcode-block" id="mix_manifolds"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks.mix_manifolds.html#mixmo.augmentations.mixing_blocks.mix_manifolds">[docs]</a><span class="k">def</span> <span class="nf">mix_manifolds</span><span class="p">(</span><span class="n">list_lfeats</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function to mix manifolds in network</span>
+
+<span class="sd">    :param list_lfeats: list of latent features: torch.tensors encodings in merged features space</span>
+<span class="sd">    :param metadata: metadata information passed in network</span>
+<span class="sd">    :type metadata: dict</span>
+
+<span class="sd">    :return: merged representation</span>
+<span class="sd">    :rtype: torch tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_inputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_lfeats</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_inputs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_lfeats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;inference&quot;</span> <span class="ow">and</span> <span class="s2">&quot;mixmo_masks&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+        <span class="c1"># Standard sum mixing at inference</span>
+        <span class="n">tensor_aggreg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">list_lfeats</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span> <span class="ow">and</span> <span class="s2">&quot;mixmo_masks&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+        <span class="c1"># Custom mixing during training</span>
+
+        <span class="c1">## 1. Computing masks</span>
+        <span class="n">mixmo_masks</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">mimo_mix_mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">list_lfeats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mimo_mix_mask</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;mixmo_masks&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="c1">## 2. Combine latent features with given masks</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mixmo_masks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1">### Special case for M=2, we can directly sum</span>
+            <span class="n">mask_0</span> <span class="o">=</span> <span class="n">mixmo_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tensor_aggreg</span> <span class="o">=</span> <span class="n">mask_0</span> <span class="o">*</span> <span class="n">list_lfeats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">mask_0</span><span class="p">)</span> <span class="o">*</span> <span class="n">list_lfeats</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">### General case</span>
+            <span class="k">assert</span> <span class="n">num_inputs</span> <span class="o">&gt;</span> <span class="mi">2</span>
+            <span class="n">list_tensor_aggreg</span> <span class="o">=</span> <span class="p">[</span><span class="n">mixmo_masks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">list_lfeats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_inputs</span><span class="p">)]</span>
+            <span class="n">tensor_aggreg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">list_tensor_aggreg</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">num_inputs</span> <span class="o">*</span> <span class="n">tensor_aggreg</span></div>
+
+
+<span class="c1">######################################### Mask computing functions for mixing #########################################</span>
+
+
+<div class="viewcode-block" id="mix"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks.mix.html#mixmo.augmentations.mixing_blocks.mix">[docs]</a><span class="k">def</span> <span class="nf">mix</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">lams</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">config_mix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Front facing function that computes the masks/lams for any</span>
+<span class="sd">    number of inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lams</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_single_mix</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">lams</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_n_mix</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">lams</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">config_mix</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_single_mix"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._single_mix.html#mixmo.augmentations.mixing_blocks._single_mix">[docs]</a><span class="k">def</span> <span class="nf">_single_mix</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes masks for two inputs (traditional MSDA methods)</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    method: string, mixing to use</span>
+<span class="sd">    lam: float</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    masks: list of torch.Tensor.</span>
+<span class="sd">    The masks used for mixing.</span>
+
+<span class="sd">    lams: list of torch.Tensor.</span>
+<span class="sd">    The lams ratio on the final masks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config_mix</span> <span class="o">=</span> <span class="n">config_mix</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">MASK_MIX_DICT</span><span class="p">[</span><span class="n">method</span><span class="p">](</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>         <span class="c1"># adjust for potential drift when computing masks</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span><span class="p">],</span> <span class="p">[</span><span class="n">lam</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="_n_mix"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._n_mix.html#mixmo.augmentations.mixing_blocks._n_mix">[docs]</a><span class="k">def</span> <span class="nf">_n_mix</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">lams</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes masks for M&gt;2 inputs (requires lam tuples)</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    method: string, mixing to use</span>
+<span class="sd">    lam: float</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    masks: list of torch.Tensor.</span>
+<span class="sd">    The masks used for mixing.</span>
+
+<span class="sd">    lams: list of torch.Tensor.</span>
+<span class="sd">    The lams ratio on the final masks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config_mix</span> <span class="o">=</span> <span class="n">config_mix</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">masks</span> <span class="o">=</span> <span class="n">MASK_N_MIX_DICT</span><span class="p">[</span><span class="n">method</span><span class="p">](</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lams</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span>
+    <span class="n">lams</span> <span class="o">=</span> <span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">]</span>  <span class="c1"># adjust for potential drift</span>
+    <span class="k">return</span> <span class="n">masks</span><span class="p">,</span> <span class="n">lams</span></div>
+
+
+<span class="c1">######################################### Mask generating functions #########################################</span>
+
+
+<div class="viewcode-block" id="_mixup_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._mixup_mask.html#mixmo.augmentations.mixing_blocks._mixup_mask">[docs]</a><span class="k">def</span> <span class="nf">_mixup_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute masks for MixUp (constant masks)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="_cutmix_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._cutmix_mask.html#mixmo.augmentations.mixing_blocks._cutmix_mask">[docs]</a><span class="k">def</span> <span class="nf">_cutmix_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute masks for CutMix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get box</span>
+    <span class="p">[</span><span class="n">bbx1</span><span class="p">,</span> <span class="n">bby1</span><span class="p">,</span> <span class="n">bbx2</span><span class="p">,</span> <span class="n">bby2</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rand_bbox_of_area_lam</span><span class="p">(</span>
+        <span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="p">(</span><span class="n">config_mix</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Build the mask</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[:,</span> <span class="n">bbx1</span><span class="p">:</span><span class="n">bbx2</span><span class="p">,</span> <span class="n">bby1</span><span class="p">:</span><span class="n">bby2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="_cow_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._cow_mask.html#mixmo.augmentations.mixing_blocks._cow_mask">[docs]</a><span class="k">def</span> <span class="nf">_cow_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute masks for CowMix</span>
+<span class="sd">    lam is overridden by Cowmask&#39;s parameters</span>
+<span class="sd">    https://github.com/google-research/google-research/tree/master/milking_cowmask/masking</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Default CowMix config</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span>
+        <span class="n">config_mix</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;cow_p_max&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s2">&quot;cow_p_min&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+            <span class="s2">&quot;cow_sigma_max&quot;</span><span class="p">:</span> <span class="mf">16.0</span><span class="p">,</span>
+            <span class="s2">&quot;cow_sigma_min&quot;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get lam ratio for the mask</span>
+    <span class="n">p_max</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;cow_p_max&quot;</span><span class="p">]</span>
+    <span class="n">p_min</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;cow_p_min&quot;</span><span class="p">]</span>
+    <span class="n">proba</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">p_min</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">p_max</span> <span class="o">-</span> <span class="n">p_min</span><span class="p">))</span>
+
+    <span class="c1"># Get sigma for Gaussian kernel</span>
+    <span class="n">sigma_max</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;cow_sigma_max&quot;</span><span class="p">]</span>
+    <span class="n">sigma_min</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;cow_sigma_min&quot;</span><span class="p">]</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_min</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_max</span><span class="p">)</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_min</span><span class="p">)))</span>
+
+    <span class="c1"># Compute Gaussian kernel</span>
+    <span class="n">gaussian_kernel</span> <span class="o">=</span> <span class="n">_gaussian_blur_kernel</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma_max</span><span class="p">)</span>
+    <span class="n">gaussian_kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gaussian_kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">gaussian_kernel</span>
+
+    <span class="c1"># Shape it as a proper kernel</span>
+    <span class="n">gaussian_kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">gaussian_kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="n">input_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">input_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">input_size</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="n">blurred_noise</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">conv2d</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">gaussian_kernel</span><span class="p">,</span> <span class="n">padding</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">noise_mean</span> <span class="o">=</span> <span class="n">blurred_noise</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">noise_std</span> <span class="o">=</span> <span class="n">blurred_noise</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+
+    <span class="c1"># Get thresholded cowmask</span>
+    <span class="n">threshold_stat</span> <span class="o">=</span> <span class="n">noise_mean</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">proba</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_std</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">blurred_noise</span> <span class="o">&lt;=</span> <span class="n">threshold_stat</span>
+
+    <span class="k">return</span> <span class="n">mask</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="_stack_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._stack_mask.html#mixmo.augmentations.mixing_blocks._stack_mask">[docs]</a><span class="k">def</span> <span class="nf">_stack_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute masks for Channel/Horizontal/Vertical concat</span>
+<span class="sd">    (number of images) x channel x (image width) x (image height)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Default config</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span><span class="n">config_mix</span><span class="p">,</span>
+                           <span class="p">{</span>
+                               <span class="s2">&quot;stack_dim&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                               <span class="s2">&quot;stack_rdflip&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="p">})</span>
+
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;stack_dim&quot;</span><span class="p">]</span>
+    <span class="n">random_flip</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;stack_rdflip&quot;</span><span class="p">]</span>
+
+    <span class="n">flip</span> <span class="o">=</span> <span class="n">random_flip</span> <span class="ow">and</span> <span class="n">misc</span><span class="o">.</span><span class="n">random_lower_than</span><span class="p">(</span>
+        <span class="n">prob</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">lam</span>
+
+    <span class="c1"># Split the dimension in two</span>
+    <span class="n">border</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lam</span> <span class="o">*</span> <span class="n">input_size</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
+
+    <span class="n">ones_size</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+    <span class="n">ones_size</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">border</span>
+
+    <span class="n">zeros_size</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+    <span class="n">zeros_size</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_size</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">-</span> <span class="n">border</span>
+
+    <span class="n">ones_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ones_size</span><span class="p">)</span>
+    <span class="n">zeros_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">zeros_size</span><span class="p">)</span>
+
+    <span class="c1"># Merge the two split masks</span>
+    <span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">zeros_mask</span><span class="p">,</span> <span class="n">ones_mask</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">ones_mask</span><span class="p">,</span> <span class="n">zeros_mask</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="_stack2_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._stack2_mask.html#mixmo.augmentations.mixing_blocks._stack2_mask">[docs]</a><span class="k">def</span> <span class="nf">_stack2_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for vertical concat mixing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span><span class="n">config_mix</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;stack_dim&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;stack_rdflip&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">_stack_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_stack0_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._stack0_mask.html#mixmo.augmentations.mixing_blocks._stack0_mask">[docs]</a><span class="k">def</span> <span class="nf">_stack0_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for channel concat mixing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span><span class="n">config_mix</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;stack_dim&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;stack_rdflip&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">_stack_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_noise_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._noise_mask.html#mixmo.augmentations.mixing_blocks._noise_mask">[docs]</a><span class="k">def</span> <span class="nf">_noise_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Random mask pixels drawn from uniform distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;noise_2d&quot;</span><span class="p">]:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">input_size</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+
+    <span class="c1"># rescale the center with a piecewise linear function to have the proper lam</span>
+    <span class="n">mask_below</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mask</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+    <span class="n">mask_above</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mask</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">lam</span> <span class="o">*</span> <span class="n">mask_below</span> <span class="o">+</span>
+                <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask_above</span><span class="p">)</span> <span class="o">+</span> <span class="n">lam</span>
+
+    <span class="k">if</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;noise_2d&quot;</span><span class="p">]:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+<div class="viewcode-block" id="_patchup_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._patchup_mask.html#mixmo.augmentations.mixing_blocks._patchup_mask">[docs]</a><span class="k">def</span> <span class="nf">_patchup_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute masks for PatchUp mixing</span>
+<span class="sd">    https://github.com/chandar-lab/PatchUp</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Default config</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span>
+        <span class="n">config_mix</span><span class="p">,</span>
+        <span class="p">{</span>
+        <span class="s2">&quot;patchup_gamma&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;patchup_block_size&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s2">&quot;patchup_soft&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;patchup_2d&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">config_mix</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;patchup_gamma&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;patchup_gamma&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">lam</span>
+
+    <span class="n">block_size</span> <span class="o">=</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;patchup_block_size&quot;</span><span class="p">]</span>
+
+    <span class="n">kernel_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span>
+    <span class="n">padding</span> <span class="o">=</span> <span class="p">(</span><span class="n">block_size</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">block_size</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">stride</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># As per the official patchup_hard implementation</span>
+    <span class="n">gamma</span> <span class="o">*=</span> <span class="p">(</span><span class="n">input_size</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">block_size</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">input_size</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">block_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;patchup_2d&quot;</span><span class="p">]:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">input_size</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+
+    <span class="n">m_i_j</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;patchup_2d&quot;</span><span class="p">]:</span>
+        <span class="n">m_i_j</span> <span class="o">=</span> <span class="n">m_i_j</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="n">input_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># following line provides the continuous blocks that should be altered with PatchUp denoted as holes here.</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">max_pool2d</span><span class="p">(</span><span class="n">m_i_j</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">padding</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;patchup_soft&quot;</span><span class="p">]:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span><span class="p">)</span> <span class="o">*</span> <span class="n">lam</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="_patchuphard2d_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._patchuphard2d_mask.html#mixmo.augmentations.mixing_blocks._patchuphard2d_mask">[docs]</a><span class="k">def</span> <span class="nf">_patchuphard2d_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for PatchUp hard masking (2d variant)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span><span class="n">config_mix</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s2">&quot;patchup_2d&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="n">_patchup_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_patchupsoft_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._patchupsoft_mask.html#mixmo.augmentations.mixing_blocks._patchupsoft_mask">[docs]</a><span class="k">def</span> <span class="nf">_patchupsoft_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for PatchUp soft masking</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">misc</span><span class="o">.</span><span class="n">ifnotfound_update</span><span class="p">(</span><span class="n">config_mix</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s2">&quot;patchup_soft&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="k">assert</span> <span class="n">config_mix</span><span class="p">[</span><span class="s2">&quot;patchup_soft&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_patchup_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_channel_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._channel_mask.html#mixmo.augmentations.mixing_blocks._channel_mask">[docs]</a><span class="k">def</span> <span class="nf">_channel_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute masks that toggle entire channels on and off</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">input_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># 0 is the channel dimension</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<span class="n">MASK_MIX_DICT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;patchuphard&quot;</span><span class="p">:</span> <span class="n">_patchup_mask</span><span class="p">,</span>
+    <span class="s2">&quot;patchupsoft&quot;</span><span class="p">:</span> <span class="n">_patchupsoft_mask</span><span class="p">,</span>
+    <span class="s2">&quot;patchuphard2d&quot;</span><span class="p">:</span> <span class="n">_patchuphard2d_mask</span><span class="p">,</span>
+    <span class="s2">&quot;mixup&quot;</span><span class="p">:</span> <span class="n">_mixup_mask</span><span class="p">,</span>
+    <span class="s2">&quot;cutmix&quot;</span><span class="p">:</span> <span class="n">_cutmix_mask</span><span class="p">,</span>
+    <span class="s2">&quot;noise&quot;</span><span class="p">:</span> <span class="n">_noise_mask</span><span class="p">,</span>
+    <span class="s2">&quot;stackchannel&quot;</span><span class="p">:</span> <span class="n">_stack0_mask</span><span class="p">,</span>  <span class="c1"># split on dimension 0</span>
+    <span class="s2">&quot;stackhorizontal&quot;</span><span class="p">:</span> <span class="n">_stack_mask</span><span class="p">,</span>  <span class="c1"># split on dimension 1</span>
+    <span class="s2">&quot;stackvertical&quot;</span><span class="p">:</span> <span class="n">_stack2_mask</span><span class="p">,</span>  <span class="c1"># split on dimension 2</span>
+    <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">_channel_mask</span><span class="p">,</span>
+    <span class="s2">&quot;cow&quot;</span><span class="p">:</span> <span class="n">_cow_mask</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">LIST_METHODS_NOT_INVARIANT_CHANNELS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;channel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stackchannel&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="_n_mixup_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._n_mixup_mask.html#mixmo.augmentations.mixing_blocks._n_mixup_mask">[docs]</a><span class="k">def</span> <span class="nf">_n_mixup_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lams</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multivariate MixUp generalization</span>
+<span class="sd">    lam is a tuple here (simplex) that gives the proportion between n inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">masks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">lam</span> <span class="ow">in</span> <span class="n">lams</span><span class="p">:</span>
+        <span class="n">masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lam</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">input_size</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">masks</span></div>
+
+
+<div class="viewcode-block" id="_n_cutinmix_mask"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._n_cutinmix_mask.html#mixmo.augmentations.mixing_blocks._n_cutinmix_mask">[docs]</a><span class="k">def</span> <span class="nf">_n_cutinmix_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lams</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multivariate CutMix generalization (see paper)</span>
+<span class="sd">    lam is a tuple here (simplex) that gives the proportion between n inputs</span>
+<span class="sd">    CutMix(A, MixUp(B,C,...))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the base masks</span>
+    <span class="n">mixup_lams</span> <span class="o">=</span> <span class="p">[</span><span class="n">lam</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lams</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">lam</span> <span class="ow">in</span> <span class="n">lams</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+    <span class="n">mixup_masks</span> <span class="o">=</span> <span class="n">_n_mixup_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">mixup_lams</span><span class="p">,</span> <span class="n">config_mix</span><span class="p">)</span>
+    <span class="n">cutmix_mask</span> <span class="o">=</span> <span class="n">_cutmix_mask</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">lams</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">config_mix</span><span class="p">)</span>
+
+    <span class="c1"># Combine the mixup and cutmix masks</span>
+    <span class="n">masks</span> <span class="o">=</span> <span class="p">[</span><span class="n">cutmix_mask</span><span class="p">]</span>
+    <span class="n">masks</span> <span class="o">+=</span> <span class="p">[(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cutmix_mask</span><span class="p">)</span> <span class="o">*</span> <span class="n">mask</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">mixup_masks</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">masks</span></div>
+
+
+<span class="n">MASK_N_MIX_DICT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mixup&quot;</span><span class="p">:</span> <span class="n">_n_mixup_mask</span><span class="p">,</span>
+    <span class="s2">&quot;cutmix&quot;</span><span class="p">:</span> <span class="n">_n_cutinmix_mask</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+
+<span class="c1">######################################### General utility functions for masking #########################################</span>
+
+
+<div class="viewcode-block" id="_rand_bbox_of_area_lam"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam.html#mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam">[docs]</a><span class="k">def</span> <span class="nf">_rand_bbox_of_area_lam</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the corner coordinates of a random rectangular box such that</span>
+<span class="sd">    area_box/area_image=lam</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Retrieving H and W depending on image format</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span>
+
+    <span class="c1"># Compute box width and height</span>
+    <span class="n">cut_rat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
+    <span class="n">cut_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">W</span> <span class="o">*</span> <span class="n">cut_rat</span><span class="p">)</span>
+    <span class="n">cut_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">H</span> <span class="o">*</span> <span class="n">cut_rat</span><span class="p">)</span>
+
+    <span class="c1"># Draw coordinates of the center of the box</span>
+    <span class="n">mynprandom</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_nprandom</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">rg_integers</span> <span class="o">=</span> <span class="n">mynprandom</span><span class="o">.</span><span class="n">randint</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">rg_integers</span> <span class="o">=</span> <span class="n">mynprandom</span><span class="o">.</span><span class="n">integers</span>
+    <span class="n">cx</span> <span class="o">=</span> <span class="n">rg_integers</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+    <span class="n">cy</span> <span class="o">=</span> <span class="n">rg_integers</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+
+    <span class="c1"># Box corners naturally follow</span>
+    <span class="n">bbx1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cx</span> <span class="o">-</span> <span class="n">cut_w</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+    <span class="n">bby1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cy</span> <span class="o">-</span> <span class="n">cut_h</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+    <span class="n">bbx2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cx</span> <span class="o">+</span> <span class="n">cut_w</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+    <span class="n">bby2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cy</span> <span class="o">+</span> <span class="n">cut_h</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">bbx1</span><span class="p">,</span> <span class="n">bby1</span><span class="p">,</span> <span class="n">bbx2</span><span class="p">,</span> <span class="n">bby2</span></div>
+
+
+<div class="viewcode-block" id="_gaussian_blur_kernel"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.mixing_blocks._gaussian_blur_kernel.html#mixmo.augmentations.mixing_blocks._gaussian_blur_kernel">[docs]</a><span class="k">def</span> <span class="nf">_gaussian_blur_kernel</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma_max</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute Gaussian kernel, as per the scipy.signal implementation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">sigma_max</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Keep up to 99.7 of the Gaussian for the kernel</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">sig2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">sigma</span>
+
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">sig2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">w</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sig2</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+mixmo.core.metrics\_ensemble.get\_accuracy\_multi
+=================================================
+
+.. currentmodule:: mixmo.core.metrics_ensemble
+
+.. autofunction:: get_accuracy_multi

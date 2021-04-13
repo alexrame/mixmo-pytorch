@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.\_rand\_bbox\_of\_area\_lam
+==============================================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: _rand_bbox_of_area_lam

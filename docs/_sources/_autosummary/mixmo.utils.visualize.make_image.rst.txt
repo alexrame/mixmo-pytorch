@@ -1,0 +1,6 @@
+mixmo.utils.visualize.make\_image
+=================================
+
+.. currentmodule:: mixmo.utils.visualize
+
+.. autofunction:: make_image

@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.get\_value\_when\_none
+=================================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: get_value_when_none

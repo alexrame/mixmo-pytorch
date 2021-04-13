@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Solarize
+===================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Solarize

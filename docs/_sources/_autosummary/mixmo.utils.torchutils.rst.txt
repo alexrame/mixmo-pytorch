@@ -1,0 +1,36 @@
+﻿mixmo.utils.torchutils
+======================
+
+.. automodule:: mixmo.utils.torchutils
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      _calculate_correct_fan
+      _calculate_fan_in_and_fan_out
+      kaiming_normal_truncated
+      onehot
+      randperm_static
+      truncated_normal_
+      weights_init_hetruncatednormal
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

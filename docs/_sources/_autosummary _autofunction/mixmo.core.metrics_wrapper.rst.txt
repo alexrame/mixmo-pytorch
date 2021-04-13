@@ -1,0 +1,40 @@
+﻿mixmo.core.metrics\_wrapper
+===========================
+
+.. automodule:: mixmo.core.metrics_wrapper
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_brier
+      get_ece
+      get_ll
+      get_tace_bayesgroup
+      merge_scores
+      show_metrics
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MetricsWrapper
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+mixmo.utils.misc.print\_args
+============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: print_args

@@ -1,0 +1,34 @@
+mixmo.augmentations
+===================
+
+.. automodule:: mixmo.augmentations
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst             
+   :recursive:
+
+   mixmo.augmentations.augmix
+   mixmo.augmentations.mixing_blocks
+   mixmo.augmentations.standard_augmentations
+

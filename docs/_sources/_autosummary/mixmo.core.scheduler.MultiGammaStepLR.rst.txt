@@ -1,0 +1,30 @@
+﻿mixmo.core.scheduler.MultiGammaStepLR
+=====================================
+
+.. currentmodule:: mixmo.core.scheduler
+
+.. autoclass:: MultiGammaStepLR
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MultiGammaStepLR.__init__
+      ~MultiGammaStepLR.get_last_lr
+      ~MultiGammaStepLR.get_lr
+      ~MultiGammaStepLR.load_state_dict
+      ~MultiGammaStepLR.state_dict
+      ~MultiGammaStepLR.step
+   
+   
+
+   
+   
+   

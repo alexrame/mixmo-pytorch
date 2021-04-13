@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.augmentations.augmix &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.augmentations.augmix</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.augmentations.augmix</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implementation following setups from PuzzleMix authors</span>
+<span class="sd">According to the seminal code: https://github.com/google-research/augmix/blob/master/cifar.py</span>
+<span class="sd">This code structure is borrowed from:</span>
+<span class="sd">https://github.com/ildoonet/pytorch-randaugment/blob/616ef12a5176169b4e1e645728f3dedd1a5a148e/RandAugment/augmentations.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">PIL</span><span class="o">,</span> <span class="nn">PIL.ImageOps</span><span class="o">,</span> <span class="nn">PIL.ImageEnhance</span><span class="o">,</span> <span class="nn">PIL.ImageDraw</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">misc</span>
+
+
+<div class="viewcode-block" id="ShearX"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.ShearX.html#mixmo.augmentations.augmix.ShearX">[docs]</a><span class="k">def</span> <span class="nf">ShearX</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">myrandom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># [-0.3, 0.3]</span>
+    <span class="k">if</span> <span class="n">myrandom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mf">0.3</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">0.3</span>
+    <span class="k">if</span> <span class="n">myrandom</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+    <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">AFFINE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ShearY"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.ShearY.html#mixmo.augmentations.augmix.ShearY">[docs]</a><span class="k">def</span> <span class="nf">ShearY</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">myrandom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># [-0.3, 0.3]</span>
+    <span class="k">if</span> <span class="n">myrandom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mf">0.3</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">0.3</span>
+    <span class="k">if</span> <span class="n">myrandom</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+    <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">AFFINE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TranslateX"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.TranslateX.html#mixmo.augmentations.augmix.TranslateX">[docs]</a><span class="k">def</span> <span class="nf">TranslateX</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">myrandom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># [-150, 150] =&gt; percentage: [-0.45, 0.45]</span>
+    <span class="k">if</span> <span class="n">myrandom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mf">0.45</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">0.45</span>
+    <span class="k">if</span> <span class="n">myrandom</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">AFFINE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TranslateY"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.TranslateY.html#mixmo.augmentations.augmix.TranslateY">[docs]</a><span class="k">def</span> <span class="nf">TranslateY</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">myrandom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># [-150, 150] =&gt; percentage: [-0.45, 0.45]</span>
+    <span class="k">if</span> <span class="n">myrandom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mf">0.45</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">0.45</span>
+    <span class="k">if</span> <span class="n">myrandom</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">AFFINE</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Rotate"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Rotate.html#mixmo.augmentations.augmix.Rotate">[docs]</a><span class="k">def</span> <span class="nf">Rotate</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">myrandom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># [-30, 30]</span>
+    <span class="k">if</span> <span class="n">myrandom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">random</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mi">30</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mi">30</span>
+    <span class="k">if</span> <span class="n">myrandom</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span>
+    <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AutoContrast"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.AutoContrast.html#mixmo.augmentations.augmix.AutoContrast">[docs]</a><span class="k">def</span> <span class="nf">AutoContrast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">autocontrast</span><span class="p">(</span><span class="n">img</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Invert"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Invert.html#mixmo.augmentations.augmix.Invert">[docs]</a><span class="k">def</span> <span class="nf">Invert</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">img</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Equalize"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Equalize.html#mixmo.augmentations.augmix.Equalize">[docs]</a><span class="k">def</span> <span class="nf">Equalize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">equalize</span><span class="p">(</span><span class="n">img</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Solarize"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Solarize.html#mixmo.augmentations.augmix.Solarize">[docs]</a><span class="k">def</span> <span class="nf">Solarize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># [0, 256]</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mi">256</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">solarize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Posterize"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Posterize.html#mixmo.augmentations.augmix.Posterize">[docs]</a><span class="k">def</span> <span class="nf">Posterize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># [4, 8]</span>
+    <span class="k">assert</span> <span class="mi">4</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mi">8</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">posterize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contrast"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Contrast.html#mixmo.augmentations.augmix.Contrast">[docs]</a><span class="k">def</span> <span class="nf">Contrast</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># [0.1,1.9]</span>
+    <span class="k">assert</span> <span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">1.9</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageEnhance</span><span class="o">.</span><span class="n">Contrast</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">enhance</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Color"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Color.html#mixmo.augmentations.augmix.Color">[docs]</a><span class="k">def</span> <span class="nf">Color</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># [0.1,1.9]</span>
+    <span class="k">assert</span> <span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">1.9</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageEnhance</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">enhance</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Brightness"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Brightness.html#mixmo.augmentations.augmix.Brightness">[docs]</a><span class="k">def</span> <span class="nf">Brightness</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># [0.1,1.9]</span>
+    <span class="k">assert</span> <span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">1.9</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageEnhance</span><span class="o">.</span><span class="n">Brightness</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">enhance</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Sharpness"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Sharpness.html#mixmo.augmentations.augmix.Sharpness">[docs]</a><span class="k">def</span> <span class="nf">Sharpness</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># [0.1,1.9]</span>
+    <span class="k">assert</span> <span class="mf">0.1</span> <span class="o">&lt;=</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">1.9</span>
+    <span class="k">return</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageEnhance</span><span class="o">.</span><span class="n">Sharpness</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">enhance</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Identity"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.Identity.html#mixmo.augmentations.augmix.Identity">[docs]</a><span class="k">def</span> <span class="nf">Identity</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="augment_list"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.augment_list.html#mixmo.augmentations.augmix.augment_list">[docs]</a><span class="k">def</span> <span class="nf">augment_list</span><span class="p">(</span><span class="n">include_auto_contrast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Accepted: equalize, posterize, rotate, solarize, shear_x, shear_y, translate_x, translate_y</span>
+    <span class="c1"># Rejected: autocontrast?, brightness, contrast, color, sharpness</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">Identity</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Equalize</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># 7</span>
+        <span class="p">(</span><span class="n">Posterize</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>  <span class="c1"># 9</span>
+        <span class="p">(</span><span class="n">Rotate</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>  <span class="c1"># 4</span>
+        <span class="p">(</span><span class="n">Solarize</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>  <span class="c1"># 8</span>
+        <span class="p">(</span><span class="n">ShearX</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>  <span class="c1"># 0</span>
+        <span class="p">(</span><span class="n">ShearY</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>  <span class="c1"># 1</span>
+        <span class="p">(</span><span class="n">TranslateX</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">),</span>  <span class="c1"># 2</span>
+        <span class="p">(</span><span class="n">TranslateY</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">),</span>  <span class="c1"># 3</span>
+        <span class="p">(</span><span class="n">Invert</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># 6,</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">include_auto_contrast</span><span class="p">:</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">AutoContrast</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># 5</span>
+    <span class="k">return</span> <span class="n">l</span></div>
+
+
+
+<div class="viewcode-block" id="get_value_when_none"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.get_value_when_none.html#mixmo.augmentations.augmix.get_value_when_none">[docs]</a><span class="k">def</span> <span class="nf">get_value_when_none</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">default_value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default_value</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="AugMix"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.AugMix.html#mixmo.augmentations.augmix.AugMix">[docs]</a><span class="k">class</span> <span class="nc">AugMix</span><span class="p">:</span>
+    <span class="n">_default_mixture_depth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">_default_mixture_width</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">_default_severity</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># [0, 30]</span>
+
+<div class="viewcode-block" id="AugMix.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.augmentations.augmix.AugMix.html#mixmo.augmentations.augmix.AugMix.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mixture_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mixture_width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aug_severity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_auto_contrast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixture_depth</span> <span class="o">=</span> <span class="n">get_value_when_none</span><span class="p">(</span>
+            <span class="n">mixture_depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_mixture_depth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixture_width</span> <span class="o">=</span> <span class="n">get_value_when_none</span><span class="p">(</span><span class="n">mixture_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_mixture_width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aug_severity</span> <span class="o">=</span> <span class="n">get_value_when_none</span><span class="p">(</span><span class="n">aug_severity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_severity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">augment_list</span> <span class="o">=</span> <span class="n">augment_list</span><span class="p">(</span><span class="n">include_auto_contrast</span><span class="o">=</span><span class="n">include_auto_contrast</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">preprocess</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">myrandom</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">mynprandom</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_nprandom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="n">ws</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">mynprandom</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixture_width</span><span class="p">))</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">mynprandom</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">mix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">preprocess</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mixture_width</span><span class="p">):</span>
+            <span class="n">image_aug</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixture_depth</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixture_depth</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">myrandom</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">mynprandom</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">augment_list</span><span class="p">)))</span>
+                <span class="n">op</span><span class="p">,</span> <span class="n">minval</span><span class="p">,</span> <span class="n">maxval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_list</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aug_severity</span><span class="p">)</span> <span class="o">/</span> <span class="mi">30</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">maxval</span> <span class="o">-</span> <span class="n">minval</span><span class="p">)</span> <span class="o">+</span> <span class="n">minval</span>
+                <span class="n">image_aug</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">image_aug</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">myrandom</span><span class="o">=</span><span class="n">myrandom</span><span class="p">)</span>
+
+            <span class="c1"># Preprocessing commutes since all coefficients are convex</span>
+            <span class="n">mix</span> <span class="o">+=</span> <span class="n">ws</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">image_aug</span><span class="p">)</span>
+
+        <span class="n">mixed</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span> <span class="o">*</span> <span class="n">mix</span>
+        <span class="k">return</span> <span class="n">mixed</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

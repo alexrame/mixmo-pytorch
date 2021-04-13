@@ -1,0 +1,6 @@
+mixmo.core.metrics\_ensemble.\_process\_predictions
+===================================================
+
+.. currentmodule:: mixmo.core.metrics_ensemble
+
+.. autofunction:: _process_predictions

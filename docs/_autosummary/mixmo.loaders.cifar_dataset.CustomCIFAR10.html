@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.loaders.cifar_dataset.CustomCIFAR10 &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mixmo.loaders.cifar_dataset.CustomCIFAR100" href="mixmo.loaders.cifar_dataset.CustomCIFAR100.html" />
+    <link rel="prev" title="mixmo.loaders.cifar_dataset.CIFARCorruptions" href="mixmo.loaders.cifar_dataset.CIFARCorruptions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mixmo.html">mixmo</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mixmo.augmentations.html">mixmo.augmentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.core.html">mixmo.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.learners.html">mixmo.learners</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="mixmo.loaders.html">mixmo.loaders</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mixmo.loaders.get_loader.html">mixmo.loaders.get_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.loaders.abstract_loader.html">mixmo.loaders.abstract_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.loaders.batch_repetition_sampler.html">mixmo.loaders.batch_repetition_sampler</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="mixmo.loaders.cifar_dataset.html">mixmo.loaders.cifar_dataset</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="mixmo.loaders.cifar_dataset.CIFARCorruptions.html">mixmo.loaders.cifar_dataset.CIFARCorruptions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">mixmo.loaders.cifar_dataset.CustomCIFAR10</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.loaders.cifar_dataset.CustomCIFAR100.html">mixmo.loaders.cifar_dataset.CustomCIFAR100</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.loaders.dataset_wrapper.html">mixmo.loaders.dataset_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.loaders.loader.html">mixmo.loaders.loader</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.networks.html">mixmo.networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.utils.html">mixmo.utils</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="mixmo.html">mixmo</a> &raquo;</li>
+        
+          <li><a href="mixmo.loaders.html">mixmo.loaders</a> &raquo;</li>
+        
+          <li><a href="mixmo.loaders.cifar_dataset.html">mixmo.loaders.cifar_dataset</a> &raquo;</li>
+        
+      <li>mixmo.loaders.cifar_dataset.CustomCIFAR10</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary/mixmo.loaders.cifar_dataset.CustomCIFAR10.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="mixmo-loaders-cifar-dataset-customcifar10">
+<h1>mixmo.loaders.cifar_dataset.CustomCIFAR10<a class="headerlink" href="#mixmo-loaders-cifar-dataset-customcifar10" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="mixmo.loaders.cifar_dataset.CustomCIFAR10">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">mixmo.loaders.cifar_dataset.</span></code><code class="sig-name descname"><span class="pre">CustomCIFAR10</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mixmo/loaders/cifar_dataset.html#CustomCIFAR10"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mixmo.loaders.cifar_dataset.CustomCIFAR10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torchvision.datasets.cifar.CIFAR10</span></code></p>
+<p>Torchvision’s CIFAR10 dataset class augmented with a custom __getitem__ method</p>
+<dl class="py method">
+<dt id="mixmo.loaders.cifar_dataset.CustomCIFAR10.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mixmo.loaders.cifar_dataset.CustomCIFAR10.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mixmo.loaders.cifar_dataset.CustomCIFAR10.__init__" title="mixmo.loaders.cifar_dataset.CustomCIFAR10.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(root[, train, transform, …])</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">download</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">extra_repr</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_folder</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_list</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tgz_md5</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_list</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mixmo.loaders.cifar_dataset.CustomCIFAR100.html" class="btn btn-neutral float-right" title="mixmo.loaders.cifar_dataset.CustomCIFAR100" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mixmo.loaders.cifar_dataset.CIFARCorruptions.html" class="btn btn-neutral float-left" title="mixmo.loaders.cifar_dataset.CIFARCorruptions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

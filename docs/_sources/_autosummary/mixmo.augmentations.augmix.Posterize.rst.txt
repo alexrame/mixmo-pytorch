@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Posterize
+====================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Posterize

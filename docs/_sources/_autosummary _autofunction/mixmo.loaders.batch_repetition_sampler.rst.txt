@@ -1,0 +1,29 @@
+mixmo.loaders.batch\_repetition\_sampler
+========================================
+
+.. automodule:: mixmo.loaders.batch_repetition_sampler
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BatchRepetitionSampler
+   
+   
+
+   
+   
+   
+
+
+

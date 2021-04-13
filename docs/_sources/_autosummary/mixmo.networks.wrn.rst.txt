@@ -1,0 +1,33 @@
+mixmo.networks.wrn
+==================
+
+.. automodule:: mixmo.networks.wrn
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      WideBasic
+      WideResNet
+      WideResNetMixMo
+   
+   
+
+   
+   
+   
+
+
+

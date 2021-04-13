@@ -1,0 +1,6 @@
+mixmo.utils.torchsummary.summary
+================================
+
+.. currentmodule:: mixmo.utils.torchsummary
+
+.. autofunction:: summary

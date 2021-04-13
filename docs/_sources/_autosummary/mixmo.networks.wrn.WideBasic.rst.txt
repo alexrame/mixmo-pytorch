@@ -1,0 +1,63 @@
+﻿mixmo.networks.wrn.WideBasic
+============================
+
+.. currentmodule:: mixmo.networks.wrn
+
+.. autoclass:: WideBasic
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WideBasic.__init__
+      ~WideBasic.add_module
+      ~WideBasic.apply
+      ~WideBasic.buffers
+      ~WideBasic.children
+      ~WideBasic.cpu
+      ~WideBasic.cuda
+      ~WideBasic.double
+      ~WideBasic.eval
+      ~WideBasic.extra_repr
+      ~WideBasic.float
+      ~WideBasic.forward
+      ~WideBasic.half
+      ~WideBasic.load_state_dict
+      ~WideBasic.modules
+      ~WideBasic.named_buffers
+      ~WideBasic.named_children
+      ~WideBasic.named_modules
+      ~WideBasic.named_parameters
+      ~WideBasic.parameters
+      ~WideBasic.register_backward_hook
+      ~WideBasic.register_buffer
+      ~WideBasic.register_forward_hook
+      ~WideBasic.register_forward_pre_hook
+      ~WideBasic.register_parameter
+      ~WideBasic.requires_grad_
+      ~WideBasic.share_memory
+      ~WideBasic.state_dict
+      ~WideBasic.to
+      ~WideBasic.train
+      ~WideBasic.type
+      ~WideBasic.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WideBasic.dump_patches
+      ~WideBasic.expansion
+   
+   

@@ -1,0 +1,6 @@
+mixmo.utils.misc.load\_config\_yaml
+===================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: load_config_yaml

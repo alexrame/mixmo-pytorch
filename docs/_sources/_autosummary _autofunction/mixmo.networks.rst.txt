@@ -1,0 +1,38 @@
+mixmo.networks
+==============
+
+.. automodule:: mixmo.networks
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_network
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   mixmo.networks.resnet
+   mixmo.networks.wrn
+

@@ -1,0 +1,39 @@
+﻿mixmo.learners.model\_wrapper.ModelWrapper
+==========================================
+
+.. currentmodule:: mixmo.learners.model_wrapper
+
+.. autoclass:: ModelWrapper
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ModelWrapper.__init__
+      ~ModelWrapper.calibrate_via_tempscale
+      ~ModelWrapper.get_dict_to_scores
+      ~ModelWrapper.get_short_logs
+      ~ModelWrapper.predict
+      ~ModelWrapper.print_summary
+      ~ModelWrapper.step
+      ~ModelWrapper.to_eval_mode
+      ~ModelWrapper.to_train_mode
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ModelWrapper.scaled_network
+   
+   

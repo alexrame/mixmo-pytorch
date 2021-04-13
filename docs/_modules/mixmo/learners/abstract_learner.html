@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.learners.abstract_learner &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.learners.abstract_learner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.learners.abstract_learner</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base Learner wrapper definitions for logging, training and evaluating models</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">misc</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">mixmo.learners</span> <span class="kn">import</span> <span class="n">model_wrapper</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AbstractLearner"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner">[docs]</a><span class="k">class</span> <span class="nc">AbstractLearner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base learner class that groups models, optimizers and loggers</span>
+<span class="sd">    Performs the entire model building, training and evaluating process</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractLearner.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_args</span><span class="p">,</span> <span class="n">dloader</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span> <span class="o">=</span> <span class="n">config_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dloader</span> <span class="o">=</span> <span class="n">dloader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tb_logger</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_model_wrapper</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_acc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_epoch</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="AbstractLearner._create_model_wrapper"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner._create_model_wrapper">[docs]</a>    <span class="k">def</span> <span class="nf">_create_model_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the model along with other elements through a ModelWrapper</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">ModelWrapper</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;model_wrapper&quot;</span><span class="p">],</span>
+            <span class="n">config_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">to_eval_mode</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">print_summary</span><span class="p">(</span>
+            <span class="n">pixels_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dloader</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span><span class="s2">&quot;pixels_size&quot;</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tb_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get (or initialize) the Tensorboard SummaryWriter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tb_logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tb_logger</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;training&quot;</span><span class="p">][</span><span class="s2">&quot;output_folder&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tb_logger</span>
+
+<div class="viewcode-block" id="AbstractLearner.save_tb"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner.save_tb">[docs]</a>    <span class="k">def</span> <span class="nf">save_tb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logs_dict</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write stats from logs_dict at epoch to the Tensoboard summary writer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">logs_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tb_logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">logs_dict</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">epoch</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;test/diversity_accuracy_mean&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">logs_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tb_logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                <span class="s2">&quot;test/diversity_accuracy_mean&quot;</span><span class="p">,</span>
+                <span class="n">logs_dict</span><span class="p">[</span><span class="s2">&quot;test/accuracy&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">epoch</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbstractLearner.load_checkpoint"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">include_optimizer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_epoch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load checkpoint (and optimizer if included) to the wrapped model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_state_dict&quot;</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">include_optimizer</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+                    <span class="n">checkpoint</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_optimizer_state_dict&quot;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_optimizer_state_dict&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">checkpoint</span>
+        <span class="k">if</span> <span class="n">return_epoch</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AbstractLearner.save_checkpoint"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save model (and optimizer) state dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get save_path</span>
+        <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dict_to_save</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">save_path</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">get_model_path</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;training&quot;</span><span class="p">][</span><span class="s2">&quot;output_folder&quot;</span><span class="p">],</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="c1"># update dict to save</span>
+        <span class="n">dict_to_save</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">network</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dict_to_save</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_optimizer_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+        <span class="c1"># final save</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">train_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="AbstractLearner.train"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train for one epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">to_train_mode</span><span class="p">(</span><span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
+
+        <span class="c1"># Train over the entire epoch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_loop</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+
+        <span class="c1"># Eval on epoch end</span>
+        <span class="n">logs_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">get_dict_to_scores</span><span class="p">(</span><span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+            <span class="n">logs_dict</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+
+        <span class="c1">## Val scores</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dloader</span><span class="o">.</span><span class="n">val_loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">val_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+                <span class="n">inference_loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dloader</span><span class="o">.</span><span class="n">val_loader</span><span class="p">,</span>
+                <span class="n">split</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">val_score</span> <span class="ow">in</span> <span class="n">val_scores</span><span class="p">:</span>
+                <span class="n">logs_dict</span><span class="p">[</span><span class="n">val_score</span><span class="p">]</span> <span class="o">=</span> <span class="n">val_scores</span><span class="p">[</span><span class="n">val_score</span><span class="p">]</span>
+
+        <span class="c1">## Test scores</span>
+        <span class="n">test_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="n">inference_loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dloader</span><span class="o">.</span><span class="n">test_loader</span><span class="p">,</span>
+            <span class="n">split</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">test_score</span> <span class="ow">in</span> <span class="n">test_scores</span><span class="p">:</span>
+            <span class="n">logs_dict</span><span class="p">[</span><span class="n">test_score</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_scores</span><span class="p">[</span><span class="n">test_score</span><span class="p">]</span>
+
+        <span class="c1">## Print metrics</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">print_dict</span><span class="p">(</span><span class="n">logs_dict</span><span class="p">)</span>
+
+        <span class="c1">## Check if best epoch</span>
+        <span class="n">is_best_epoch</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">ens_acc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">logs_dict</span><span class="p">[</span><span class="s2">&quot;test/accuracy&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">ens_acc</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_acc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_acc</span> <span class="o">=</span> <span class="n">ens_acc</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="n">is_best_epoch</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1">## Save the model checkpoint</span>
+        <span class="c1">## and not config.cfg.DEBUG</span>
+        <span class="k">if</span> <span class="n">is_best_epoch</span><span class="p">:</span>
+            <span class="n">logs_dict</span><span class="p">[</span><span class="s2">&quot;general/checkpoint_saved&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> was saved&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logs_dict</span><span class="p">[</span><span class="s2">&quot;general/checkpoint_saved&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0&quot;</span><span class="p">}</span>
+
+        <span class="c1">## CSV logging</span>
+        <span class="n">short_logs_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">logs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+             <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">regex</span> <span class="ow">in</span> <span class="n">k</span> <span class="k">for</span> <span class="n">regex</span> <span class="ow">in</span> <span class="p">[</span>
+                 <span class="s2">&quot;test/accuracy&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;train/accuracy&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;checkpoint_saved&quot;</span>
+                 <span class="p">]])</span>
+            <span class="p">})</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">csv_writter</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">misc</span><span class="o">.</span><span class="n">get_logs_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;training&quot;</span><span class="p">][</span><span class="s2">&quot;output_folder&quot;</span><span class="p">]),</span>
+            <span class="n">dic</span><span class="o">=</span><span class="n">short_logs_dict</span>
+        <span class="p">)</span>
+        <span class="c1"># Tensorboard logging</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_tb</span><span class="p">(</span><span class="n">logs_dict</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
+
+        <span class="c1"># Perform end of step procedure like scheduler update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">evaluate_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dloader</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="AbstractLearner.evaluate"><a class="viewcode-back" href="../../../_autosummary/mixmo.learners.abstract_learner.AbstractLearner.html#mixmo.learners.abstract_learner.AbstractLearner.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inference_loader</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform an evaluation of the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Restart stats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">to_eval_mode</span><span class="p">()</span>
+
+        <span class="c1"># Evaluation over the dataset properly speaking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_loop</span><span class="p">(</span><span class="n">inference_loader</span><span class="p">)</span>
+
+        <span class="c1"># Gather scores</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_wrapper</span><span class="o">.</span><span class="n">get_dict_to_scores</span><span class="p">(</span><span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scores</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

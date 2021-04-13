@@ -1,0 +1,35 @@
+﻿mixmo.loaders.dataset\_wrapper.MixMoDataset
+===========================================
+
+.. currentmodule:: mixmo.loaders.dataset_wrapper
+
+.. autoclass:: MixMoDataset
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MixMoDataset.__init__
+      ~MixMoDataset.call_dataset
+      ~MixMoDataset.call_msda
+      ~MixMoDataset.get_mixmo_mix_method_at_ratio_epoch
+      ~MixMoDataset.set_ratio_epoch
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MixMoDataset.reverse_if_first_minor
+   
+   

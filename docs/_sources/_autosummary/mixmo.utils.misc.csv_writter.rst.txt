@@ -1,0 +1,6 @@
+mixmo.utils.misc.csv\_writter
+=============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: csv_writter

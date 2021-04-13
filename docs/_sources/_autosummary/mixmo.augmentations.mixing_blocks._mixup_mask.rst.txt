@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.\_mixup\_mask
+================================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: _mixup_mask

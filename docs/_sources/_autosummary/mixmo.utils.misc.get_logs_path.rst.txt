@@ -1,0 +1,6 @@
+mixmo.utils.misc.get\_logs\_path
+================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: get_logs_path

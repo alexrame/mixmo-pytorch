@@ -1,9 +1,13 @@
+"""
+General Variable definitions, mostly for testing purposes
+"""
+
 from easydict import EasyDict
 
 cfg = EasyDict()
 
 cfg.DEBUG = 0
-
+cfg.SAVE_EVERY_X_EPOCH = 30
 cfg.RATIO_EPOCH_DECREASE = 11/12
 
 # TEST CONFIGS

@@ -1,0 +1,6 @@
+mixmo.core.metrics\_ensemble.compute\_mean\_without\_diagonal
+=============================================================
+
+.. currentmodule:: mixmo.core.metrics_ensemble
+
+.. autofunction:: compute_mean_without_diagonal

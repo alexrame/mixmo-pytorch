@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.kaiming\_normal\_truncated
+=================================================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: kaiming_normal_truncated

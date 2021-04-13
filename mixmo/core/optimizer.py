@@ -1,3 +1,7 @@
+"""
+Optimizer factory
+"""
+
 import torch.optim as optim
 from mixmo.utils.logger import get_logger
 

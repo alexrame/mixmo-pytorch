@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.core.metrics_wrapper &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.core.metrics_wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.core.metrics_wrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Wrapper functions for metric tracking</span>
+<span class="sd">Mostly taken from https://github.com/bayesgroup/pytorch-ensembles/blob/master/metrics.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">visualize</span>
+<span class="kn">from</span> <span class="nn">mixmo.utils.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">mixmo.core</span> <span class="kn">import</span> <span class="n">metrics_ensemble</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="merge_scores"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.merge_scores.html#mixmo.core.metrics_wrapper.merge_scores">[docs]</a><span class="k">def</span> <span class="nf">merge_scores</span><span class="p">(</span><span class="n">scores_test</span><span class="p">,</span> <span class="n">scores_val</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aggregate scores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scores_valtest</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">scores_test</span><span class="p">:</span>
+        <span class="n">key_valtest</span> <span class="o">=</span> <span class="s2">&quot;final/&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;test/&quot;</span><span class="p">):</span>
+            <span class="n">keyval</span> <span class="o">=</span> <span class="s2">&quot;val/&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">scores_test</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">scores_val</span><span class="p">[</span><span class="n">keyval</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">scores_test</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;string&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">05.2%</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.6</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="n">value_str</span><span class="p">}</span>
+            <span class="n">scores_valtest</span><span class="p">[</span><span class="n">key_valtest</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scores_valtest</span><span class="p">[</span><span class="n">key_valtest</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores_test</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">scores_valtest</span></div>
+
+
+<div class="viewcode-block" id="_clean_metrics"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper._clean_metrics.html#mixmo.core.metrics_wrapper._clean_metrics">[docs]</a><span class="k">def</span> <span class="nf">_clean_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reformat metrics dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">):</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">new_dict</span></div>
+
+<div class="viewcode-block" id="show_metrics"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.show_metrics.html#mixmo.core.metrics_wrapper.show_metrics">[docs]</a><span class="k">def</span> <span class="nf">show_metrics</span><span class="p">(</span><span class="n">scores_test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Results printer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;final/accuracy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;final/accuracytop5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;final/nll&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;final/ece&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">clean_scores_test</span> <span class="o">=</span> <span class="n">_clean_metrics</span><span class="p">(</span><span class="n">scores_test</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;str&quot;</span><span class="p">)</span>
+    <span class="n">our_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">clean_scores_test</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &amp; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &amp; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">our_results</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_ece"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.get_ece.html#mixmo.core.metrics_wrapper.get_ece">[docs]</a><span class="k">def</span> <span class="nf">get_ece</span><span class="p">(</span><span class="n">proba_pred</span><span class="p">,</span> <span class="n">accurate</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">min_pred</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute ECE and write to file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">min_pred</span> <span class="o">==</span> <span class="s2">&quot;minpred&quot;</span><span class="p">:</span>
+        <span class="n">min_pred</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">proba_pred</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">min_pred</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">bin_boundaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_pred</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">n_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">bin_lowers</span> <span class="o">=</span> <span class="n">bin_boundaries</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">bin_uppers</span> <span class="o">=</span> <span class="n">bin_boundaries</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">acc_in_bin_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">avg_confs_in_bins</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">list_prop_bin</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ece</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">bin_lower</span><span class="p">,</span> <span class="n">bin_upper</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bin_lowers</span><span class="p">,</span> <span class="n">bin_uppers</span><span class="p">):</span>
+        <span class="n">in_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">proba_pred</span> <span class="o">&gt;</span> <span class="n">bin_lower</span><span class="p">,</span> <span class="n">proba_pred</span> <span class="o">&lt;=</span> <span class="n">bin_upper</span><span class="p">)</span>
+        <span class="n">prop_in_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">in_bin</span><span class="p">)</span>
+        <span class="n">list_prop_bin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop_in_bin</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prop_in_bin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">accuracy_in_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accurate</span><span class="p">[</span><span class="n">in_bin</span><span class="p">])</span>
+            <span class="n">avg_confidence_in_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">proba_pred</span><span class="p">[</span><span class="n">in_bin</span><span class="p">])</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">avg_confidence_in_bin</span> <span class="o">-</span> <span class="n">accuracy_in_bin</span>
+            <span class="n">acc_in_bin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy_in_bin</span><span class="p">)</span>
+            <span class="n">avg_confs_in_bins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avg_confidence_in_bin</span><span class="p">)</span>
+            <span class="n">ece</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">prop_in_bin</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;From </span><span class="si">{</span><span class="n">bin_lower</span><span class="si">:</span><span class="s2">4.5</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">bin_upper</span><span class="si">:</span><span class="s2">4.5</span><span class="si">}</span><span class="s2"> and mean </span><span class="si">{</span><span class="n">avg_confidence_in_bin</span><span class="si">:</span><span class="s2">3.5</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="p">(</span><span class="n">prop_in_bin</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="si">:</span><span class="s2">4.5</span><span class="si">}</span><span class="s2"> % samples with accuracy </span><span class="si">{</span><span class="n">accuracy_in_bin</span><span class="si">:</span><span class="s2">4.5</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">avg_confs_in_bins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">acc_in_bin_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">write_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">visualize</span><span class="o">.</span><span class="n">write_calibration</span><span class="p">(</span>
+            <span class="n">avg_confs_in_bins</span><span class="o">=</span><span class="n">avg_confs_in_bins</span><span class="p">,</span>
+            <span class="n">acc_in_bin_list</span><span class="o">=</span><span class="n">acc_in_bin_list</span><span class="p">,</span>
+            <span class="n">prop_bin</span><span class="o">=</span><span class="n">list_prop_bin</span><span class="p">,</span>
+            <span class="n">min_bin</span><span class="o">=</span><span class="n">bin_lowers</span><span class="p">,</span>
+            <span class="n">max_bin</span><span class="o">=</span><span class="n">bin_uppers</span><span class="p">,</span>
+            <span class="n">min_pred</span><span class="o">=</span><span class="n">min_pred</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ece</span><span class="si">:</span><span class="s2">.4</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">write_file</span><span class="o">=</span><span class="n">write_file</span><span class="p">)</span>
+
+    <span class="c1"># For reliability diagrams, also need to return these:</span>
+    <span class="c1"># return ece, bin_lowers, avg_confs_in_bins</span>
+    <span class="k">return</span> <span class="n">ece</span><span class="p">,</span> <span class="n">avg_confs_in_bins</span><span class="p">,</span> <span class="n">acc_in_bin_list</span></div>
+
+
+<div class="viewcode-block" id="get_tace_bayesgroup"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.get_tace_bayesgroup.html#mixmo.core.metrics_wrapper.get_tace_bayesgroup">[docs]</a><span class="k">def</span> <span class="nf">get_tace_bayesgroup</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute TACE and write to file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_objects</span><span class="p">,</span> <span class="n">n_classes</span> <span class="o">=</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">cur_class</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_classes</span><span class="p">):</span>
+        <span class="n">cur_class_conf</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[:,</span> <span class="n">cur_class</span><span class="p">]</span>
+
+        <span class="n">targets_sorted</span> <span class="o">=</span> <span class="n">targets</span><span class="p">[</span><span class="n">cur_class_conf</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>
+        <span class="n">cur_class_conf_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cur_class_conf</span><span class="p">)</span>
+
+        <span class="n">targets_sorted</span> <span class="o">=</span> <span class="n">targets_sorted</span><span class="p">[</span><span class="n">cur_class_conf_sorted</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span>
+        <span class="n">cur_class_conf_sorted</span> <span class="o">=</span> <span class="n">cur_class_conf_sorted</span><span class="p">[</span><span class="n">cur_class_conf_sorted</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span>
+
+        <span class="n">bin_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cur_class_conf_sorted</span><span class="p">)</span> <span class="o">//</span> <span class="n">n_bins</span>
+
+        <span class="k">for</span> <span class="n">bin_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bins</span><span class="p">):</span>
+            <span class="n">bin_start_ind</span> <span class="o">=</span> <span class="n">bin_i</span> <span class="o">*</span> <span class="n">bin_size</span>
+            <span class="k">if</span> <span class="n">bin_i</span> <span class="o">&lt;</span> <span class="n">n_bins</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">bin_end_ind</span> <span class="o">=</span> <span class="n">bin_start_ind</span> <span class="o">+</span> <span class="n">bin_size</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bin_end_ind</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets_sorted</span><span class="p">)</span>
+                <span class="n">bin_size</span> <span class="o">=</span> <span class="n">bin_end_ind</span> <span class="o">-</span> <span class="n">bin_start_ind</span>  <span class="c1"># extend last bin until the end of prediction array</span>
+            <span class="n">bin_acc</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets_sorted</span><span class="p">[</span><span class="n">bin_start_ind</span> <span class="p">:</span> <span class="n">bin_end_ind</span><span class="p">]</span> <span class="o">==</span> <span class="n">cur_class</span><span class="p">)</span>
+            <span class="n">bin_conf</span> <span class="o">=</span> <span class="n">cur_class_conf_sorted</span><span class="p">[</span><span class="n">bin_start_ind</span> <span class="p">:</span> <span class="n">bin_end_ind</span><span class="p">]</span>
+            <span class="n">avg_confidence_in_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bin_conf</span><span class="p">)</span>
+            <span class="n">avg_accuracy_in_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bin_acc</span><span class="p">)</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">avg_confidence_in_bin</span> <span class="o">-</span> <span class="n">avg_accuracy_in_bin</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">bin_size</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_objects</span> <span class="o">*</span> <span class="n">n_classes</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="get_ll"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.get_ll.html#mixmo.core.metrics_wrapper.get_ll">[docs]</a><span class="k">def</span> <span class="nf">get_ll</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute log likelihood</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">preds_target</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)),</span> <span class="n">targets</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e-12</span> <span class="o">+</span> <span class="n">preds_target</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_brier"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.get_brier.html#mixmo.core.metrics_wrapper.get_brier">[docs]</a><span class="k">def</span> <span class="nf">get_brier</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute brier score</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">one_hot_targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">one_hot_targets</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)),</span> <span class="n">targets</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">preds</span> <span class="o">-</span> <span class="n">one_hot_targets</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MetricsWrapper"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper">[docs]</a><span class="k">class</span> <span class="nc">MetricsWrapper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Metric storing object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MetricsWrapper.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accurate_or_wrong</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_confidences</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+        <span class="c1"># metrics</span>
+        <span class="k">if</span> <span class="s2">&quot;nll&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nll</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="s2">&quot;brier&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">brier</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="s2">&quot;accuracytop5&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_accurate_top5</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="s2">&quot;tace&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Keep all predictions to compute TACE. Can be heavy, do not use in training&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_np_probs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_np_targets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s2">&quot;diversity&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_target_diversity</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_matrix_predictions_diversity</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="MetricsWrapper.update"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">confidence</span><span class="p">,</span> <span class="n">probs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute tracked metrics and update records</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accurate_or_wrong</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_confidences</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">confidence</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+        <span class="n">np_probs</span> <span class="o">=</span> <span class="n">probs</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">np_targets</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;nll&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nll</span> <span class="o">-=</span> <span class="n">get_ll</span><span class="p">(</span><span class="n">np_probs</span><span class="p">,</span> <span class="n">np_targets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;brier&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">brier</span> <span class="o">=</span> <span class="n">get_brier</span><span class="p">(</span><span class="n">np_probs</span><span class="p">,</span> <span class="n">np_targets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">brier</span> <span class="o">+=</span> <span class="n">brier</span>
+        <span class="k">if</span> <span class="s2">&quot;accuracytop5&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">pred5</span> <span class="o">=</span> <span class="n">probs</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">pred5</span> <span class="o">=</span> <span class="n">pred5</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+            <span class="n">correct5</span> <span class="o">=</span> <span class="n">pred5</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">pred5</span><span class="p">))</span>
+            <span class="n">correct5</span> <span class="o">=</span> <span class="n">correct5</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_accurate_top5</span> <span class="o">+=</span> <span class="n">correct5</span>
+        <span class="k">if</span> <span class="s2">&quot;tace&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_np_probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np_probs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_list_np_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np_targets</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MetricsWrapper.update_diversity"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper.update_diversity">[docs]</a>    <span class="k">def</span> <span class="nf">update_diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute and update records of diversity metrics</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_list_target_diversity</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_list_matrix_predictions_diversity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MetricsWrapper.get_scores"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper.get_scores">[docs]</a>    <span class="k">def</span> <span class="nf">get_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print stored results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_confidences</span><span class="p">):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No predictions so far&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">accurate_or_wrong</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accurate_or_wrong</span><span class="p">,</span> <span class="n">newshape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accurate_or_wrong</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">list_confidences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_confidences</span><span class="p">,</span> <span class="n">newshape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_confidences</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="n">len_dataset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_confidences</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;diversity&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">diversity_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_diversity_stats</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">diversity_key</span><span class="p">,</span> <span class="n">diversity_stat</span> <span class="ow">in</span> <span class="n">diversity_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="o">+</span> <span class="n">diversity_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">diversity_stat</span>
+
+        <span class="k">if</span> <span class="s2">&quot;accuracy&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accurate_or_wrong</span><span class="p">)</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">accuracy</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">05.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;nll&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">nll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nll</span> <span class="o">/</span> <span class="n">len_dataset</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/nll&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">nll</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nll</span><span class="si">:</span><span class="s2">.6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;accuracytop5&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">accuracytop5</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_accurate_top5</span> <span class="o">/</span> <span class="n">len_dataset</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/accuracytop5&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">accuracytop5</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">accuracytop5</span><span class="si">:</span><span class="s2">05.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;auc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">accurate_or_wrong</span><span class="p">,</span> <span class="n">list_confidences</span><span class="p">)</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/auc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">auc</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">auc</span><span class="si">:</span><span class="s2">.6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;brier&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">brier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brier</span> <span class="o">/</span> <span class="n">len_dataset</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/brier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">brier</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">brier</span><span class="si">:</span><span class="s2">.6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ece&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">ece</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_ece</span><span class="p">(</span>
+                <span class="n">list_confidences</span><span class="p">,</span> <span class="n">accurate_or_wrong</span><span class="p">,</span> <span class="n">min_pred</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">write_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/ece&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">ece</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ece</span><span class="si">:</span><span class="s2">.6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="s2">&quot;tace&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_list_np_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_list_np_targets</span><span class="p">)</span>
+            <span class="n">tace</span> <span class="o">=</span> <span class="n">get_tace_bayesgroup</span><span class="p">(</span><span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+            <span class="n">scores</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">/tace&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">tace</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tace</span><span class="si">:</span><span class="s2">.6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">scores</span></div>
+
+<div class="viewcode-block" id="MetricsWrapper._get_diversity_stats"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper._get_diversity_stats">[docs]</a>    <span class="k">def</span> <span class="nf">_get_diversity_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve stored diversity stats</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_list_matrix_predictions_diversity</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">num_members</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_list_matrix_predictions_diversity</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">list_predictions_diversity</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_members</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">matrix_predictions_diversity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_matrix_predictions_diversity</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">num_member</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_members</span><span class="p">):</span>
+                <span class="n">list_predictions_diversity</span><span class="p">[</span><span class="n">num_member</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="n">matrix_predictions_diversity</span><span class="p">[</span><span class="n">num_member</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">metrics_ensemble</span><span class="o">.</span><span class="n">MetricsEnsemble</span><span class="p">(</span>
+            <span class="n">true</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_list_target_diversity</span><span class="p">,</span>
+            <span class="n">predictions</span><span class="o">=</span><span class="n">list_predictions_diversity</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_members</span><span class="p">)]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">get_report</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">stats</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

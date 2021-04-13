@@ -1,0 +1,6 @@
+mixmo.core.metrics\_ensemble.compute\_pairwise\_diversity
+=========================================================
+
+.. currentmodule:: mixmo.core.metrics_ensemble
+
+.. autofunction:: compute_pairwise_diversity

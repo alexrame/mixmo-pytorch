@@ -1,0 +1,34 @@
+mixmo.learners
+==============
+
+.. automodule:: mixmo.learners
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst             
+   :recursive:
+
+   mixmo.learners.abstract_learner
+   mixmo.learners.learner
+   mixmo.learners.model_wrapper
+

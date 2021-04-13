@@ -1,0 +1,6 @@
+mixmo.core.optimizer.get\_optimizer
+===================================
+
+.. currentmodule:: mixmo.core.optimizer
+
+.. autofunction:: get_optimizer

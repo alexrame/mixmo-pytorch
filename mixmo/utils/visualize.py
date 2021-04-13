@@ -1,3 +1,7 @@
+"""
+Calibration and image printing utility functions
+"""
+
 import matplotlib.pyplot as plt
 import torchvision
 import numpy as np

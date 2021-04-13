@@ -1,0 +1,6 @@
+mixmo.learners.model\_wrapper.get\_predictions
+==============================================
+
+.. currentmodule:: mixmo.learners.model_wrapper
+
+.. autofunction:: get_predictions

@@ -1,3 +1,7 @@
+"""
+CIFAR 10 and 100 dataset wrappers
+"""
+
 import os
 from PIL import Image
 import numpy as np

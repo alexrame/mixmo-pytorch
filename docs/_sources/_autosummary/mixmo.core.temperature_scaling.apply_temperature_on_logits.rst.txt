@@ -1,0 +1,6 @@
+mixmo.core.temperature\_scaling.apply\_temperature\_on\_logits
+==============================================================
+
+.. currentmodule:: mixmo.core.temperature_scaling
+
+.. autofunction:: apply_temperature_on_logits

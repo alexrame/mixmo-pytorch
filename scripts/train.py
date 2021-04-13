@@ -49,7 +49,7 @@ def parse_args():
 def transform_args(args):
     # shared transform
     config_args = misc.load_config_yaml(args.config_path)
-    config_args["training"]["output_folder"] = misc.get_output_folder_from_config(
+    config_args["training"]["output_folder"] = output_folder = misc.get_output_folder_from_config(
         saveplace=args.saveplace, config_path=args.config_path
     )
     config.cfg.DEBUG = args.debug
@@ -57,33 +57,27 @@ def transform_args(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # recover epoch and checkpoints
-    ckpt_path = None
-    if os.path.exists(config_args["training"]["output_folder"]):
+    checkpoint = None
+    if os.path.exists(output_folder):
         if not args.from_scratch:
-            ckpt_path = misc.get_previous_ckpt(config_args["training"]["output_folder"])
+            checkpoint = misc.get_previous_ckpt(output_folder)
         else:
-            rmtree(config_args["training"]["output_folder"])
-    if ckpt_path is not None:
-        LOGGER.warning(f"Last checkpoint: {ckpt_path}")
-        checkpoint = torch.load(ckpt_path, map_location=device)
-        start_epoch = checkpoint["epoch"] + 1
-    else:
-        os.mkdir(config_args["training"]["output_folder"])
-        LOGGER.info("Starting from scratch")
-        checkpoint = None
-        start_epoch = 1
+            rmtree(output_folder)
+            os.mkdir(output_folder)
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
     copyfile(
         args.config_path,
-        os.path.join(config_args["training"]["output_folder"], f"config_{start_epoch}.yaml")
+        os.path.join(output_folder, "config.yaml")
     )
 
     # seed
-    config.cfg.RANDOM.SEED = args.seed - 1 + start_epoch
+    config.cfg.RANDOM.SEED = args.seed
     misc.set_determ(config.cfg.RANDOM.SEED)
-    return config_args, start_epoch, device, checkpoint
+    return config_args, device, checkpoint
 
 
-def train(config_args, start_epoch, device, checkpoint, dataplace):
+def train(config_args, device, checkpoint, dataplace):
 
     # Load dataset
     LOGGER.info(f"Loading dataset {config_args['data']['dataset']}")
@@ -97,17 +91,24 @@ def train(config_args, start_epoch, device, checkpoint, dataplace):
     )
 
     # Resume existing model or from pretrained one
-    if start_epoch > 1:
-        assert checkpoint is not None
-        learner.load_checkpoint(checkpoint, include_optimizer=True)
+    if checkpoint is not None:
+        LOGGER.warning(f"Load checkpoint: {checkpoint}")
+        start_epoch = learner.load_checkpoint(
+            checkpoint, include_optimizer=True, return_epoch=True) + 1
+        config.cfg.RANDOM.SEED = config.cfg.RANDOM.SEED - 1 + start_epoch
+        misc.set_determ(config.cfg.RANDOM.SEED)
+    else:
+        LOGGER.info("Starting from scratch")
+        start_epoch = 1
 
     LOGGER.info(f"Saving logs in: {config_args['training']['output_folder']}")
 
-        # Start training
+    # Start training
     _config_name = os.path.split(
         os.path.splitext(config_args['training']['config_path'])[0])[-1]
 
     try:
+        epoch = start_epoch
         for epoch in range(start_epoch, config_args["training"]["nb_epochs"] + 1):
             LOGGER.debug(f"Epoch: {epoch} for: {_config_name}")
             learner.dloader.traindatasetwrapper.set_ratio_epoch(
@@ -130,9 +131,8 @@ def train(config_args, start_epoch, device, checkpoint, dataplace):
 def main_train():
     # train
     args = parse_args()
-    config_args, start_epoch, device, checkpoint = transform_args(args)
-    if start_epoch < int(config_args["training"]["nb_epochs"]) + 1:
-        train(config_args, start_epoch, device, checkpoint, dataplace=args.dataplace)
+    config_args, device, checkpoint = transform_args(args)
+    train(config_args, device, checkpoint, dataplace=args.dataplace)
 
     # test at best epoch
     best_checkpoint = misc.get_checkpoint(

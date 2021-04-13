@@ -1,0 +1,6 @@
+mixmo.augmentations.augmix.Equalize
+===================================
+
+.. currentmodule:: mixmo.augmentations.augmix
+
+.. autofunction:: Equalize

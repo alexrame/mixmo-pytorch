@@ -1,0 +1,63 @@
+﻿mixmo.networks.wrn.WideResNet
+=============================
+
+.. currentmodule:: mixmo.networks.wrn
+
+.. autoclass:: WideResNet
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WideResNet.__init__
+      ~WideResNet.add_module
+      ~WideResNet.apply
+      ~WideResNet.buffers
+      ~WideResNet.children
+      ~WideResNet.cpu
+      ~WideResNet.cuda
+      ~WideResNet.double
+      ~WideResNet.eval
+      ~WideResNet.extra_repr
+      ~WideResNet.float
+      ~WideResNet.forward
+      ~WideResNet.half
+      ~WideResNet.load_state_dict
+      ~WideResNet.modules
+      ~WideResNet.named_buffers
+      ~WideResNet.named_children
+      ~WideResNet.named_modules
+      ~WideResNet.named_parameters
+      ~WideResNet.parameters
+      ~WideResNet.register_backward_hook
+      ~WideResNet.register_buffer
+      ~WideResNet.register_forward_hook
+      ~WideResNet.register_forward_pre_hook
+      ~WideResNet.register_parameter
+      ~WideResNet.requires_grad_
+      ~WideResNet.share_memory
+      ~WideResNet.state_dict
+      ~WideResNet.to
+      ~WideResNet.train
+      ~WideResNet.type
+      ~WideResNet.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WideResNet.dense_gaussian
+      ~WideResNet.dump_patches
+   
+   

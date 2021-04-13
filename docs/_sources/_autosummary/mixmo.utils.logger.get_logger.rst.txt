@@ -1,0 +1,6 @@
+mixmo.utils.logger.get\_logger
+==============================
+
+.. currentmodule:: mixmo.utils.logger
+
+.. autofunction:: get_logger

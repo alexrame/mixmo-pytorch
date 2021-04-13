@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.core.loss &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.core.loss</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.core.loss</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base loss definitions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils</span> <span class="kn">import</span> <span class="n">misc</span><span class="p">,</span> <span class="n">logger</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AbstractLoss"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.AbstractLoss.html#mixmo.core.loss.AbstractLoss">[docs]</a><span class="k">class</span> <span class="nc">AbstractLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">_Loss</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base loss class defining printing and logging utilies</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractLoss.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.AbstractLoss.html#mixmo.core.loss.AbstractLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_args</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">config_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span> <span class="o">=</span> <span class="n">config_args</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span> <span class="o">=</span> <span class="n">config_loss</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="p">[</span><span class="s2">&quot;display_name&quot;</span><span class="p">]</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">_Loss</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">print_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using loss: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="si">}</span><span class="s2"> with name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_accumulator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_len</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="AbstractLoss.get_accumulator_stats"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.AbstractLoss.html#mixmo.core.loss.AbstractLoss.get_accumulator_stats">[docs]</a>    <span class="k">def</span> <span class="nf">get_accumulator_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gather tracked stats into a dictionary as formatted strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_len</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({})</span>
+        <span class="n">loss_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_loss</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_len</span>
+
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;long&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">split</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">split</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">loss_value</span><span class="p">,</span>
+                <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loss_value</span><span class="si">:</span><span class="s2">.5</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># make it as short as possibe to fit on one line of tqdm postfix</span>
+            <span class="n">loss_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loss_value</span><span class="si">:</span><span class="s2">.3</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;e-0&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_string</span>
+
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+<div class="viewcode-block" id="AbstractLoss.forward"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.AbstractLoss.html#mixmo.core.loss.AbstractLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="n">current_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_loss</span> <span class="o">+=</span> <span class="n">current_loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_len</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">current_loss</span></div>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="SoftCrossEntropyLoss"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.SoftCrossEntropyLoss.html#mixmo.core.loss.SoftCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">SoftCrossEntropyLoss</span><span class="p">(</span><span class="n">AbstractLoss</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Soft CrossEntropy loss that specifies the proper forward function for AbstractLoss</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SoftCrossEntropyLoss._forward"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.SoftCrossEntropyLoss.html#mixmo.core.loss.SoftCrossEntropyLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cross entropy that accepts soft targets</span>
+<span class="sd">        Args:</span>
+<span class="sd">            pred: predictions for neural network</span>
+<span class="sd">            targets: targets, can be soft</span>
+<span class="sd">            size_average: if false, sum is returned instead of mean</span>
+
+<span class="sd">        Examples::</span>
+
+<span class="sd">            input = torch.FloatTensor([[1.1, 2.8, 1.3], [1.1, 2.1, 4.8]])</span>
+<span class="sd">            input = torch.autograd.Variable(out, requires_grad=True)</span>
+
+<span class="sd">            target = torch.FloatTensor([[0.05, 0.9, 0.05], [0.05, 0.05, 0.9]])</span>
+<span class="sd">            target = torch.autograd.Variable(y1)</span>
+<span class="sd">            loss = cross_entropy(input, target)</span>
+<span class="sd">            loss.backward()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">logsoftmax</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LogSoftmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="n">target</span> <span class="o">*</span> <span class="n">logsoftmax</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div></div>
+
+
+
+<span class="n">DICT_LOSS_STANDARD</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;soft_cross_entropy&quot;</span><span class="p">:</span> <span class="n">SoftCrossEntropyLoss</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="WrapperLoss"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss">[docs]</a><span class="k">class</span> <span class="nc">WrapperLoss</span><span class="p">(</span><span class="n">AbstractLoss</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around the multiple losses. Initialized from listloss.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="WrapperLoss.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_loss</span><span class="p">,</span> <span class="n">config_args</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="n">AbstractLoss</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">config_args</span><span class="o">=</span><span class="n">config_args</span><span class="p">,</span>
+            <span class="n">config_loss</span><span class="o">=</span><span class="n">config_loss</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_get_losses</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regularized_network</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="WrapperLoss._init_get_losses"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss._init_get_losses">[docs]</a>    <span class="k">def</span> <span class="nf">_init_get_losses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize and gather losses from listloss</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ic</span><span class="p">,</span> <span class="n">config_loss</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="p">[</span><span class="s2">&quot;listloss&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">config_loss</span><span class="p">[</span><span class="s2">&quot;coeff&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&lt;num_members&quot;</span><span class="p">:</span>
+                <span class="n">config_loss</span><span class="p">[</span><span class="s2">&quot;coeff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="k">if</span> <span class="n">ic</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">[</span><span class="s2">&quot;num_members&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">config_loss</span><span class="p">[</span><span class="s2">&quot;coeff&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skip loss: </span><span class="si">{</span><span class="n">config_loss</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">loss_callable</span> <span class="o">=</span> <span class="n">get_loss</span><span class="p">(</span><span class="n">config_loss</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">config_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_args</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config_loss</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">[</span><span class="s2">&quot;callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_callable</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">losses</span></div>
+
+    <span class="k">def</span> <span class="nf">print_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">start_accumulator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">AbstractLoss</span><span class="o">.</span><span class="n">start_accumulator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">:</span>
+            <span class="n">loss</span><span class="p">[</span><span class="s2">&quot;callable&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">start_accumulator</span><span class="p">()</span>
+
+<div class="viewcode-block" id="WrapperLoss.get_accumulator_stats"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss.get_accumulator_stats">[docs]</a>    <span class="k">def</span> <span class="nf">get_accumulator_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gather tracked stats into a dictionary as formatted strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accumulator_len</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">AbstractLoss</span><span class="o">.</span><span class="n">get_accumulator_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;long&quot;</span><span class="p">:</span>
+            <span class="c1"># tensorboard logs</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;l2_reg&quot;</span><span class="p">):</span>
+                <span class="n">l2_reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2_reg</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;general/l2_reg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">l2_reg</span><span class="p">,</span>
+                    <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">l2_reg</span><span class="si">:</span><span class="s2">.4</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">:</span>
+                <span class="n">substats</span> <span class="o">=</span> <span class="n">loss</span><span class="p">[</span><span class="s2">&quot;callable&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_accumulator_stats</span><span class="p">(</span>
+                    <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span>
+                    <span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">misc</span><span class="o">.</span><span class="n">clean_update</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">substats</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+<div class="viewcode-block" id="WrapperLoss._forward"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss._forward">[docs]</a>    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform loss forwards for each sublosses and l2 reg</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">computed_losses</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_forward_subloss</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">]</span>
+        <span class="n">stacked_computed_losses</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">computed_losses</span><span class="p">)</span>
+        <span class="n">final_loss</span> <span class="o">=</span> <span class="n">stacked_computed_losses</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;l2_reg&quot;</span><span class="p">):</span>
+            <span class="n">final_loss</span> <span class="o">=</span> <span class="n">final_loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2_reg</span><span class="p">()</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;l2_reg&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">final_loss</span></div>
+
+<div class="viewcode-block" id="WrapperLoss._forward_subloss"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss._forward_subloss">[docs]</a>    <span class="k">def</span> <span class="nf">_forward_subloss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Standard loss forward for one of the sublosses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="s2">&quot;coeff&quot;</span><span class="p">])</span>
+        <span class="n">subloss_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_item</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="n">dict_tensors</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">subloss_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_item</span><span class="p">(</span><span class="n">loss</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span> <span class="n">dict_tensors</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">[</span><span class="s2">&quot;callable&quot;</span><span class="p">](</span><span class="nb">input</span><span class="o">=</span><span class="n">subloss_input</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">subloss_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span> <span class="o">*</span> <span class="n">coeff</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_match_item</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dict_tensors</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">misc</span><span class="o">.</span><span class="n">is_none</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dict_tensors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dict_tensors</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_regularized_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_loss</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;l2_reg&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">regularized_network</span> <span class="o">=</span> <span class="n">network</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set l2 regularization on </span><span class="si">{</span><span class="n">network</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WrapperLoss.l2_reg"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.WrapperLoss.html#mixmo.core.loss.WrapperLoss.l2_reg">[docs]</a>    <span class="k">def</span> <span class="nf">l2_reg</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute l2 regularization/weight decay over the non-excluded parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">regularized_network</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="c1"># Retrieve non excluded parameters</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularized_network</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+        <span class="c1"># Iterate over all parameters to decay</span>
+        <span class="n">l2_reg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">W</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">l2_reg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">l2_reg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">l2_reg</span> <span class="o">=</span> <span class="n">l2_reg</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">l2_reg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">l2_reg</span></div></div>
+
+
+<div class="viewcode-block" id="get_loss"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.loss.get_loss.html#mixmo.core.loss.get_loss">[docs]</a><span class="k">def</span> <span class="nf">get_loss</span><span class="p">(</span><span class="n">config_loss</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct loss object, wrapped if there are multiple losses</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loss_name</span> <span class="o">=</span> <span class="n">config_loss</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">loss_name</span> <span class="o">==</span> <span class="s2">&quot;multitask&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">WrapperLoss</span><span class="p">(</span><span class="n">config_args</span><span class="o">=</span><span class="n">config_args</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">config_loss</span><span class="o">=</span><span class="n">config_loss</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">loss_name</span> <span class="ow">in</span> <span class="n">DICT_LOSS_STANDARD</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">DICT_LOSS_STANDARD</span><span class="p">[</span><span class="n">loss_name</span><span class="p">](</span>
+            <span class="n">config_loss</span><span class="o">=</span><span class="n">config_loss</span><span class="p">,</span> <span class="n">config_args</span><span class="o">=</span><span class="n">config_args</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss </span><span class="si">{</span><span class="n">loss_name</span><span class="si">}</span><span class="s2"> not implemented&quot;</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">print_details</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

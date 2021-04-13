@@ -1,0 +1,6 @@
+mixmo.utils.misc.random\_lower\_than
+====================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: random_lower_than

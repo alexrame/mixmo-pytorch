@@ -1,0 +1,6 @@
+mixmo.utils.misc.sample\_lams
+=============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: sample_lams

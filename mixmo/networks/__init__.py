@@ -1,3 +1,7 @@
+"""
+Networks used in the main paper
+"""
+
 from mixmo.utils.logger import get_logger
 
 from mixmo.networks import resnet, wrn

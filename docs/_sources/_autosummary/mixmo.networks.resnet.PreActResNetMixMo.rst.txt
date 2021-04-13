@@ -1,0 +1,63 @@
+﻿mixmo.networks.resnet.PreActResNetMixMo
+=======================================
+
+.. currentmodule:: mixmo.networks.resnet
+
+.. autoclass:: PreActResNetMixMo
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PreActResNetMixMo.__init__
+      ~PreActResNetMixMo.add_module
+      ~PreActResNetMixMo.apply
+      ~PreActResNetMixMo.buffers
+      ~PreActResNetMixMo.children
+      ~PreActResNetMixMo.cpu
+      ~PreActResNetMixMo.cuda
+      ~PreActResNetMixMo.double
+      ~PreActResNetMixMo.eval
+      ~PreActResNetMixMo.extra_repr
+      ~PreActResNetMixMo.float
+      ~PreActResNetMixMo.forward
+      ~PreActResNetMixMo.half
+      ~PreActResNetMixMo.load_state_dict
+      ~PreActResNetMixMo.modules
+      ~PreActResNetMixMo.named_buffers
+      ~PreActResNetMixMo.named_children
+      ~PreActResNetMixMo.named_modules
+      ~PreActResNetMixMo.named_parameters
+      ~PreActResNetMixMo.parameters
+      ~PreActResNetMixMo.register_backward_hook
+      ~PreActResNetMixMo.register_buffer
+      ~PreActResNetMixMo.register_forward_hook
+      ~PreActResNetMixMo.register_forward_pre_hook
+      ~PreActResNetMixMo.register_parameter
+      ~PreActResNetMixMo.requires_grad_
+      ~PreActResNetMixMo.share_memory
+      ~PreActResNetMixMo.state_dict
+      ~PreActResNetMixMo.to
+      ~PreActResNetMixMo.train
+      ~PreActResNetMixMo.type
+      ~PreActResNetMixMo.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PreActResNetMixMo.dense_gaussian
+      ~PreActResNetMixMo.dump_patches
+   
+   

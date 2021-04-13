@@ -1,3 +1,7 @@
+"""
+Basic augmentation procedures
+"""
+
 from torchvision import transforms
 from mixmo.utils.logger import get_logger
 

@@ -1,0 +1,39 @@
+﻿mixmo.loaders.cifar\_dataset.CIFARCorruptions
+=============================================
+
+.. currentmodule:: mixmo.loaders.cifar_dataset
+
+.. autoclass:: CIFARCorruptions
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CIFARCorruptions.__init__
+      ~CIFARCorruptions.download
+      ~CIFARCorruptions.extra_repr
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CIFARCorruptions.base_folder
+      ~CIFARCorruptions.filename
+      ~CIFARCorruptions.meta
+      ~CIFARCorruptions.test_list
+      ~CIFARCorruptions.tgz_md5
+      ~CIFARCorruptions.train_list
+      ~CIFARCorruptions.url
+   
+   

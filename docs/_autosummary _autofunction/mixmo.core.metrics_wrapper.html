@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.core.metrics_wrapper &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>mixmo.core.metrics_wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary _autofunction/mixmo.core.metrics_wrapper.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-mixmo.core.metrics_wrapper">
+<span id="mixmo-core-metrics-wrapper"></span><h1>mixmo.core.metrics_wrapper<a class="headerlink" href="#module-mixmo.core.metrics_wrapper" title="Permalink to this headline">¶</a></h1>
+<p>Wrapper functions for metric tracking
+Mostly taken from <a class="reference external" href="https://github.com/bayesgroup/pytorch-ensembles/blob/master/metrics.py">https://github.com/bayesgroup/pytorch-ensembles/blob/master/metrics.py</a></p>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.get_brier.html#mixmo.core.metrics_wrapper.get_brier" title="mixmo.core.metrics_wrapper.get_brier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_brier</span></code></a>(preds, targets, **args)</p></td>
+<td><p>Compute brier score</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.get_ece.html#mixmo.core.metrics_wrapper.get_ece" title="mixmo.core.metrics_wrapper.get_ece"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ece</span></code></a>(proba_pred, accurate[, n_bins, …])</p></td>
+<td><p>Compute ECE and write to file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.get_ll.html#mixmo.core.metrics_wrapper.get_ll" title="mixmo.core.metrics_wrapper.get_ll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ll</span></code></a>(preds, targets, **args)</p></td>
+<td><p>Compute log likelihood</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.get_tace_bayesgroup.html#mixmo.core.metrics_wrapper.get_tace_bayesgroup" title="mixmo.core.metrics_wrapper.get_tace_bayesgroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tace_bayesgroup</span></code></a>(preds, targets[, …])</p></td>
+<td><p>Compute TACE and write to file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.merge_scores.html#mixmo.core.metrics_wrapper.merge_scores" title="mixmo.core.metrics_wrapper.merge_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_scores</span></code></a>(scores_test, scores_val)</p></td>
+<td><p>Aggregate scores</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.show_metrics.html#mixmo.core.metrics_wrapper.show_metrics" title="mixmo.core.metrics_wrapper.show_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_metrics</span></code></a>(scores_test)</p></td>
+<td><p>Results printer</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../_autosummary/mixmo.core.metrics_wrapper.MetricsWrapper.html#mixmo.core.metrics_wrapper.MetricsWrapper" title="mixmo.core.metrics_wrapper.MetricsWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetricsWrapper</span></code></a>(metrics)</p></td>
+<td><p>Metric storing object</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

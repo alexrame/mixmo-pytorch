@@ -1,0 +1,31 @@
+mixmo.loaders.dataset\_wrapper
+==============================
+
+.. automodule:: mixmo.loaders.dataset_wrapper
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DADataset
+      MSDADataset
+      MixMoDataset
+   
+   
+
+   
+   
+   
+
+
+

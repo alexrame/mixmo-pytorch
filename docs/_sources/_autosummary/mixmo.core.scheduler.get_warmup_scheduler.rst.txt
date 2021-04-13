@@ -1,0 +1,6 @@
+mixmo.core.scheduler.get\_warmup\_scheduler
+===========================================
+
+.. currentmodule:: mixmo.core.scheduler
+
+.. autofunction:: get_warmup_scheduler

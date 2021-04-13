@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.\_calculate\_correct\_fan
+================================================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: _calculate_correct_fan

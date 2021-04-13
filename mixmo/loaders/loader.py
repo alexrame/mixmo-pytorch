@@ -1,3 +1,7 @@
+"""
+Custom Dataloaders for each of the considered datasets
+"""
+
 import os
 
 from torchvision import datasets

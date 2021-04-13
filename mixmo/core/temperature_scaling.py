@@ -1,4 +1,5 @@
 """
+Temperature scaling functions and networks modules
 Taken from https://github.com/gpleiss/temperature_scaling/blob/master/temperature_scaling.py
 """
 
@@ -24,7 +25,6 @@ class NetworkWithTemperature(nn.Module):
     A thin decorator, which wraps a network with temperature scaling
     network (nn.Module):
     """
-
     default_temperature = 1.0
     def __init__(self, network, temperature=None, device=None):
         nn.Module.__init__(self)

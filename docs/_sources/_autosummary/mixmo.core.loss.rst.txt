@@ -1,0 +1,40 @@
+mixmo.core.loss
+===============
+
+.. automodule:: mixmo.core.loss
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      get_loss
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      AbstractLoss
+      SoftCrossEntropyLoss
+      WrapperLoss
+   
+   
+
+   
+   
+   
+
+
+

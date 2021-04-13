@@ -1,0 +1,38 @@
+﻿mixmo.learners.learner.Learner
+==============================
+
+.. currentmodule:: mixmo.learners.learner
+
+.. autoclass:: Learner
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Learner.__init__
+      ~Learner.evaluate
+      ~Learner.evaluate_loop
+      ~Learner.load_checkpoint
+      ~Learner.save_checkpoint
+      ~Learner.save_tb
+      ~Learner.train
+      ~Learner.train_loop
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Learner.tb_logger
+   
+   

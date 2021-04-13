@@ -1,0 +1,6 @@
+mixmo.augmentations.standard\_augmentations.get\_default\_composed\_augmentations
+=================================================================================
+
+.. currentmodule:: mixmo.augmentations.standard_augmentations
+
+.. autofunction:: get_default_composed_augmentations

@@ -1,0 +1,26 @@
+﻿mixmo.loaders.batch\_repetition\_sampler.BatchRepetitionSampler
+===============================================================
+
+.. currentmodule:: mixmo.loaders.batch_repetition_sampler
+
+.. autoclass:: BatchRepetitionSampler
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BatchRepetitionSampler.__init__
+      ~BatchRepetitionSampler.output_format
+   
+   
+
+   
+   
+   

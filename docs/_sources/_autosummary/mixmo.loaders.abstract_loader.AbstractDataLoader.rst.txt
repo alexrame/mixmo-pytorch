@@ -1,0 +1,27 @@
+﻿mixmo.loaders.abstract\_loader.AbstractDataLoader
+=================================================
+
+.. currentmodule:: mixmo.loaders.abstract_loader
+
+.. autoclass:: AbstractDataLoader
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AbstractDataLoader.__init__
+      ~AbstractDataLoader.make_corruptions_test_dataset
+      ~AbstractDataLoader.make_standard_loader
+   
+   
+
+   
+   
+   

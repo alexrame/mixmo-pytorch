@@ -1,0 +1,6 @@
+mixmo.utils.misc.clean\_update
+==============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: clean_update

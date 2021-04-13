@@ -1,0 +1,6 @@
+mixmo.core.loss.get\_loss
+=========================
+
+.. currentmodule:: mixmo.core.loss
+
+.. autofunction:: get_loss

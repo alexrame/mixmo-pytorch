@@ -1,0 +1,51 @@
+mixmo.augmentations.augmix
+==========================
+
+.. automodule:: mixmo.augmentations.augmix
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      AutoContrast
+      Brightness
+      Color
+      Contrast
+      Equalize
+      Identity
+      Invert
+      Posterize
+      Rotate
+      Sharpness
+      ShearX
+      ShearY
+      Solarize
+      TranslateX
+      TranslateY
+      augment_list
+      get_value_when_none
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AugMix
+   
+   
+
+   
+   
+   
+
+
+

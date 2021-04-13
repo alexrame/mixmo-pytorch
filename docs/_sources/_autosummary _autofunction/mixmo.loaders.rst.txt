@@ -1,0 +1,41 @@
+mixmo.loaders
+=============
+
+.. automodule:: mixmo.loaders
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_loader
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   mixmo.loaders.abstract_loader
+   mixmo.loaders.batch_repetition_sampler
+   mixmo.loaders.cifar_dataset
+   mixmo.loaders.dataset_wrapper
+   mixmo.loaders.loader
+

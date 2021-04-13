@@ -1,3 +1,8 @@
+"""
+Utility functions for random sampling, type checking, dictionary handling,
+checkpoint parsing and configuration
+"""
+
 import csv
 from csv import DictWriter
 import os
@@ -260,12 +265,14 @@ def get_output_folder_from_config(saveplace, config_path):
     return os.path.join(saveplace, config_name)
 
 
+PREFIX_CHECKPOINTS = "checkpoint_epoch"
+
 def get_previous_ckpt(output_folder):
     list_previous_epochs = sorted(
         [
             int(f.split(".")[0].split("_")[-1])
             for f in os.listdir(output_folder)
-            if "model_epoch" in f
+            if PREFIX_CHECKPOINTS in f
         ]
     )
 
@@ -276,7 +283,7 @@ def get_previous_ckpt(output_folder):
 
 
 def get_model_path(output_folder, epoch):
-    ckpt_path = os.path.join(output_folder, f"checkpoint_epoch_{epoch:03d}.ckpt")
+    ckpt_path = os.path.join(output_folder, PREFIX_CHECKPOINTS + f"_{epoch:03d}.ckpt")
     return ckpt_path
 
 

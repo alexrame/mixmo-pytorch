@@ -1,0 +1,6 @@
+mixmo.augmentations.mixing\_blocks.\_cow\_mask
+==============================================
+
+.. currentmodule:: mixmo.augmentations.mixing_blocks
+
+.. autofunction:: _cow_mask

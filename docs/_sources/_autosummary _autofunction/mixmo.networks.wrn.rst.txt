@@ -1,0 +1,31 @@
+mixmo.networks.wrn
+==================
+
+.. automodule:: mixmo.networks.wrn
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      WideBasic
+      WideResNet
+      WideResNetMixMo
+   
+   
+
+   
+   
+   
+
+
+

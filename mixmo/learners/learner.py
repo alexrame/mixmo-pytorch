@@ -1,3 +1,7 @@
+"""
+Training and evaluation loop definitions for the Learner objects
+"""
+
 from tqdm import tqdm
 
 import torch

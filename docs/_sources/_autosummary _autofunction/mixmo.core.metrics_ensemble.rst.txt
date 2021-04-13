@@ -1,0 +1,38 @@
+mixmo.core.metrics\_ensemble
+============================
+
+.. automodule:: mixmo.core.metrics_ensemble
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      compute_mean_without_diagonal
+      compute_pairwise_diversity
+      get_accuracy_multi
+      ratio_errors
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MetricsEnsemble
+   
+   
+
+   
+   
+   
+
+
+

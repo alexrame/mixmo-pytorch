@@ -1,0 +1,6 @@
+mixmo.utils.misc.is\_zero
+=========================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: is_zero

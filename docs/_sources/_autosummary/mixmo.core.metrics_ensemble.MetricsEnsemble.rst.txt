@@ -1,0 +1,29 @@
+﻿mixmo.core.metrics\_ensemble.MetricsEnsemble
+============================================
+
+.. currentmodule:: mixmo.core.metrics_ensemble
+
+.. autoclass:: MetricsEnsemble
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MetricsEnsemble.__init__
+      ~MetricsEnsemble.get_diversity_ratioerrors
+      ~MetricsEnsemble.get_individualaccuracies
+      ~MetricsEnsemble.get_report
+      ~MetricsEnsemble.help
+   
+   
+
+   
+   
+   

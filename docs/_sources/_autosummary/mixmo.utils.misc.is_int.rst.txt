@@ -1,0 +1,6 @@
+mixmo.utils.misc.is\_int
+========================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: is_int

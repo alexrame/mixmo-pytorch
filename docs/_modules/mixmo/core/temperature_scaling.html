@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.core.temperature_scaling &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mixmo.core.temperature_scaling</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mixmo.core.temperature_scaling</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Temperature scaling functions and networks modules</span>
+<span class="sd">Taken from https://github.com/gpleiss/temperature_scaling/blob/master/temperature_scaling.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+
+<span class="kn">from</span> <span class="nn">mixmo.utils.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="apply_temperature_on_logits"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.temperature_scaling.apply_temperature_on_logits.html#mixmo.core.temperature_scaling.apply_temperature_on_logits">[docs]</a><span class="k">def</span> <span class="nf">apply_temperature_on_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply temperature relaxation on logits</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reshaped_temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">logits</span> <span class="o">/</span> <span class="n">reshaped_temperature</span></div>
+
+
+<div class="viewcode-block" id="NetworkWithTemperature"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.temperature_scaling.NetworkWithTemperature.html#mixmo.core.temperature_scaling.NetworkWithTemperature">[docs]</a><span class="k">class</span> <span class="nc">NetworkWithTemperature</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A thin decorator, which wraps a network with temperature scaling</span>
+<span class="sd">    network (nn.Module):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default_temperature</span> <span class="o">=</span> <span class="mf">1.0</span>
+<div class="viewcode-block" id="NetworkWithTemperature.__init__"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.temperature_scaling.NetworkWithTemperature.html#mixmo.core.temperature_scaling.NetworkWithTemperature.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_temperature</span> <span class="o">=</span> <span class="n">temperature</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_temperature</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">,</span>
+            <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NetworkWithTemperature.forward"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.temperature_scaling.NetworkWithTemperature.html#mixmo.core.temperature_scaling.NetworkWithTemperature.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_temperature</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="NetworkWithTemperature.apply_temperature"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.temperature_scaling.NetworkWithTemperature.html#mixmo.core.temperature_scaling.NetworkWithTemperature.apply_temperature">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">apply_temperature</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply temperature scaling to outputs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;logits_prescaled&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">]</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">apply_temperature_on_logits</span><span class="p">(</span>
+            <span class="n">logits</span><span class="o">=</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;logits_prescaled&quot;</span><span class="p">],</span> <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+    <span class="k">def</span> <span class="nf">learn_temperature_gridsearch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_loader</span><span class="p">,</span> <span class="n">lrs</span><span class="p">,</span> <span class="n">max_iters</span><span class="p">):</span>
+        <span class="n">best_temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_temperature</span>
+        <span class="n">valid_loader_processed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_training</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
+        <span class="n">best_nll</span> <span class="o">=</span> <span class="n">valid_loader_processed</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">lr</span> <span class="ow">in</span> <span class="n">lrs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">max_iter</span> <span class="ow">in</span> <span class="n">max_iters</span><span class="p">:</span>
+                <span class="n">temperature</span><span class="p">,</span> <span class="n">nll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learn_temperature</span><span class="p">(</span>
+                    <span class="n">valid_loader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">valid_loader_processed</span><span class="o">=</span><span class="n">valid_loader_processed</span><span class="p">,</span>
+                    <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+                    <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">best_nll</span> <span class="o">&gt;</span> <span class="n">nll</span><span class="p">:</span>
+                    <span class="n">best_nll</span> <span class="o">=</span> <span class="n">nll</span>
+                    <span class="n">best_temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_temperature</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">best_nll</span> <span class="o">&lt;=</span> <span class="n">valid_loader_processed</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;temperature scaling failed because nll increased&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selecting temperature: </span><span class="si">{</span><span class="n">best_temperature</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> - nll : </span><span class="si">{</span><span class="n">best_nll</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_temperature</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="n">best_temperature</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_loader</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nll_criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># First: collect all the logits and targets for the validation set</span>
+        <span class="n">logits_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">targets_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">valid_loader</span><span class="p">:</span>
+                <span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="p">(</span><span class="nb">input</span><span class="p">)[</span><span class="s2">&quot;logits&quot;</span><span class="p">]</span>
+
+                <span class="n">logits_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+                <span class="n">targets_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">logits_list</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">targets_list</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># Calculate NLL before temperature scaling</span>
+        <span class="n">before_temperature_nll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nll_criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Before temperature - nll: </span><span class="si">{</span><span class="n">before_temperature_nll</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">before_temperature_nll</span>
+
+    <span class="c1"># This function probably should live outside of this class, but whatever</span>
+<div class="viewcode-block" id="NetworkWithTemperature._learn_temperature"><a class="viewcode-back" href="../../../_autosummary/mixmo.core.temperature_scaling.NetworkWithTemperature.html#mixmo.core.temperature_scaling.NetworkWithTemperature._learn_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">_learn_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_loader</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">valid_loader_processed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tune the temperature of the network (using the validation set).</span>
+<span class="sd">        We&#39;re going to set it to optimize NLL.</span>
+<span class="sd">        valid_loader (DataLoader): validation set loader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">valid_loader_processed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">before_temperature_nll</span><span class="p">)</span> <span class="o">=</span> <span class="n">valid_loader_processed</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">before_temperature_nll</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_training</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
+
+        <span class="c1"># Next: optimize the temperature w.r.t. NLL</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">LBFGS</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">eval</span><span class="p">():</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nll_criterion</span><span class="p">(</span>
+                <span class="n">apply_temperature_on_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">),</span>
+                <span class="n">targets</span><span class="p">)</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">loss</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="nb">eval</span><span class="p">)</span>
+
+        <span class="c1"># Calculate NLL after temperature scaling</span>
+        <span class="n">after_temperature_nll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nll_criterion</span><span class="p">(</span>
+            <span class="n">apply_temperature_on_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">),</span>
+            <span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;With lr: </span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s1">.6f</span><span class="si">}</span><span class="s1">, temperature </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> - nll: </span><span class="si">{</span><span class="n">after_temperature_nll</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">after_temperature_nll</span> <span class="o">&gt;</span> <span class="n">before_temperature_nll</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Temperature scaling failed for lr: </span><span class="si">{lr:.6f}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_temperature</span><span class="p">,</span> <span class="n">before_temperature_nll</span>
+
+        <span class="n">temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">after_temperature_nll</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

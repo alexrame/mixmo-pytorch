@@ -1,0 +1,35 @@
+﻿mixmo.loaders.loader.CIFAR10Loader
+==================================
+
+.. currentmodule:: mixmo.loaders.loader
+
+.. autoclass:: CIFAR10Loader
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CIFAR10Loader.__init__
+      ~CIFAR10Loader.make_corruptions_test_dataset
+      ~CIFAR10Loader.make_standard_loader
+      ~CIFAR10Loader.properties
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CIFAR10Loader.corruptions_data_dir
+      ~CIFAR10Loader.data_dir
+   
+   

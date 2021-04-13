@@ -1,0 +1,33 @@
+mixmo.loaders.loader
+====================
+
+.. automodule:: mixmo.loaders.loader
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      CIFAR100Loader
+      CIFAR10Loader
+      TinyImagenet200Loader
+   
+   
+
+   
+   
+   
+
+
+

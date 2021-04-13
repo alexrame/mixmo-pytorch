@@ -1,0 +1,6 @@
+mixmo.core.metrics\_wrapper.\_clean\_metrics
+============================================
+
+.. currentmodule:: mixmo.core.metrics_wrapper
+
+.. autofunction:: _clean_metrics

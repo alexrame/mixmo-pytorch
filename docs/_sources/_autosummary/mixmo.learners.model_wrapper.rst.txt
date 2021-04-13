@@ -1,0 +1,38 @@
+﻿mixmo.learners.model\_wrapper
+=============================
+
+.. automodule:: mixmo.learners.model_wrapper
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      get_predictions
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      ModelWrapper
+   
+   
+
+   
+   
+   
+
+
+

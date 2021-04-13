@@ -1,0 +1,6 @@
+mixmo.utils.misc.get\_model\_path
+=================================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: get_model_path

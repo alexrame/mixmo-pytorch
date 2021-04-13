@@ -1,0 +1,6 @@
+mixmo.core.metrics\_ensemble.ratio\_errors
+==========================================
+
+.. currentmodule:: mixmo.core.metrics_ensemble
+
+.. autofunction:: ratio_errors

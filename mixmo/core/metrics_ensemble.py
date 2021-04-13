@@ -1,4 +1,5 @@
 """
+Ensembling metrics
 Inspired from
 * https://github.com/kbogas/EnsembleDiversityTests/blob/master/EnsembleDiversityTests.py
 * https://github.com/scikit-learn-contrib/DESlib

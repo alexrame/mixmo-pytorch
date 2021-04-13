@@ -1,0 +1,54 @@
+mixmo.utils.misc
+================
+
+.. automodule:: mixmo.utils.misc
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      clean_startswith
+      clean_update
+      csv_writter
+      dirty_update
+      find_best_epoch
+      get_checkpoint
+      get_logs_path
+      get_model_path
+      get_nprandom
+      get_output_folder_from_config
+      get_previous_ckpt
+      get_random
+      ifnotfound_update
+      is_float
+      is_int
+      is_nan
+      is_none
+      is_zero
+      load_config_yaml
+      load_yaml
+      print_args
+      print_dict
+      random_lower_than
+      sample_lams
+      set_determ
+      update
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

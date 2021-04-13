@@ -1,0 +1,33 @@
+mixmo.networks.resnet
+=====================
+
+.. automodule:: mixmo.networks.resnet
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      PreActBlock
+      PreActResNet
+      PreActResNetMixMo
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,48 @@
+﻿mixmo.augmentations.mixing\_blocks
+==================================
+
+.. automodule:: mixmo.augmentations.mixing_blocks
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      _channel_mask
+      _cow_mask
+      _cutmix_mask
+      _gaussian_blur_kernel
+      _mixup_mask
+      _n_cutinmix_mask
+      _n_mix
+      _n_mixup_mask
+      _noise_mask
+      _patchup_mask
+      _patchuphard2d_mask
+      _patchupsoft_mask
+      _rand_bbox_of_area_lam
+      _single_mix
+      _stack0_mask
+      _stack2_mask
+      _stack_mask
+      mix
+      mix_manifolds
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

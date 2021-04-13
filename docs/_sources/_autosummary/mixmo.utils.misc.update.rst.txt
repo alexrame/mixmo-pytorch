@@ -1,0 +1,6 @@
+mixmo.utils.misc.update
+=======================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: update

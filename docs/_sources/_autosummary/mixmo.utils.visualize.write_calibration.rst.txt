@@ -1,0 +1,6 @@
+mixmo.utils.visualize.write\_calibration
+========================================
+
+.. currentmodule:: mixmo.utils.visualize
+
+.. autofunction:: write_calibration

@@ -1,0 +1,63 @@
+﻿mixmo.networks.resnet.PreActBlock
+=================================
+
+.. currentmodule:: mixmo.networks.resnet
+
+.. autoclass:: PreActBlock
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PreActBlock.__init__
+      ~PreActBlock.add_module
+      ~PreActBlock.apply
+      ~PreActBlock.buffers
+      ~PreActBlock.children
+      ~PreActBlock.cpu
+      ~PreActBlock.cuda
+      ~PreActBlock.double
+      ~PreActBlock.eval
+      ~PreActBlock.extra_repr
+      ~PreActBlock.float
+      ~PreActBlock.forward
+      ~PreActBlock.half
+      ~PreActBlock.load_state_dict
+      ~PreActBlock.modules
+      ~PreActBlock.named_buffers
+      ~PreActBlock.named_children
+      ~PreActBlock.named_modules
+      ~PreActBlock.named_parameters
+      ~PreActBlock.parameters
+      ~PreActBlock.register_backward_hook
+      ~PreActBlock.register_buffer
+      ~PreActBlock.register_forward_hook
+      ~PreActBlock.register_forward_pre_hook
+      ~PreActBlock.register_parameter
+      ~PreActBlock.requires_grad_
+      ~PreActBlock.share_memory
+      ~PreActBlock.state_dict
+      ~PreActBlock.to
+      ~PreActBlock.train
+      ~PreActBlock.type
+      ~PreActBlock.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PreActBlock.dump_patches
+      ~PreActBlock.expansion
+   
+   

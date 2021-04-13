@@ -1,0 +1,31 @@
+mixmo.loaders.cifar\_dataset
+============================
+
+.. automodule:: mixmo.loaders.cifar_dataset
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      CIFARCorruptions
+      CustomCIFAR10
+      CustomCIFAR100
+   
+   
+
+   
+   
+   
+
+
+

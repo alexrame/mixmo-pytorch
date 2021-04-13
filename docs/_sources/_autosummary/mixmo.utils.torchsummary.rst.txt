@@ -1,0 +1,30 @@
+mixmo.utils.torchsummary
+========================
+
+.. automodule:: mixmo.utils.torchsummary
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      summary
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

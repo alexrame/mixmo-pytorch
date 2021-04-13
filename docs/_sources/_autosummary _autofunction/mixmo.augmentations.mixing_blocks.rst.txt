@@ -1,0 +1,30 @@
+mixmo.augmentations.mixing\_blocks
+==================================
+
+.. automodule:: mixmo.augmentations.mixing_blocks
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      mix
+      mix_manifolds
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

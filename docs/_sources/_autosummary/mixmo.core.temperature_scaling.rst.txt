@@ -1,0 +1,38 @@
+mixmo.core.temperature\_scaling
+===============================
+
+.. automodule:: mixmo.core.temperature_scaling
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:                                  
+   
+      apply_temperature_on_logits
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:                                   
+      :template: custom-class-template.rst         
+   
+      NetworkWithTemperature
+   
+   
+
+   
+   
+   
+
+
+

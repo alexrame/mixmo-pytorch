@@ -1,3 +1,7 @@
+"""
+Scheduler definitions and factory
+"""
+
 from torch.optim.lr_scheduler import Counter, _LRScheduler
 from mixmo.utils.logger import get_logger
 

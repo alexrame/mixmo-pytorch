@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>mixmo.augmentations.mixing_blocks &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mixmo.augmentations.mixing_blocks._channel_mask" href="mixmo.augmentations.mixing_blocks._channel_mask.html" />
+    <link rel="prev" title="mixmo.augmentations.augmix.AugMix" href="mixmo.augmentations.augmix.AugMix.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mixmo.html">mixmo</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="mixmo.augmentations.html">mixmo.augmentations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mixmo.augmentations.augmix.html">mixmo.augmentations.augmix</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mixmo.augmentations.mixing_blocks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._channel_mask.html">mixmo.augmentations.mixing_blocks._channel_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._cow_mask.html">mixmo.augmentations.mixing_blocks._cow_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._cutmix_mask.html">mixmo.augmentations.mixing_blocks._cutmix_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._gaussian_blur_kernel.html">mixmo.augmentations.mixing_blocks._gaussian_blur_kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._mixup_mask.html">mixmo.augmentations.mixing_blocks._mixup_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._n_cutinmix_mask.html">mixmo.augmentations.mixing_blocks._n_cutinmix_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._n_mix.html">mixmo.augmentations.mixing_blocks._n_mix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._n_mixup_mask.html">mixmo.augmentations.mixing_blocks._n_mixup_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._noise_mask.html">mixmo.augmentations.mixing_blocks._noise_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._patchup_mask.html">mixmo.augmentations.mixing_blocks._patchup_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._patchuphard2d_mask.html">mixmo.augmentations.mixing_blocks._patchuphard2d_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._patchupsoft_mask.html">mixmo.augmentations.mixing_blocks._patchupsoft_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam.html">mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._single_mix.html">mixmo.augmentations.mixing_blocks._single_mix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._stack0_mask.html">mixmo.augmentations.mixing_blocks._stack0_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._stack2_mask.html">mixmo.augmentations.mixing_blocks._stack2_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks._stack_mask.html">mixmo.augmentations.mixing_blocks._stack_mask</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks.mix.html">mixmo.augmentations.mixing_blocks.mix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixmo.augmentations.mixing_blocks.mix_manifolds.html">mixmo.augmentations.mixing_blocks.mix_manifolds</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixmo.augmentations.standard_augmentations.html">mixmo.augmentations.standard_augmentations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.core.html">mixmo.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.learners.html">mixmo.learners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.loaders.html">mixmo.loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.networks.html">mixmo.networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixmo.utils.html">mixmo.utils</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="mixmo.html">mixmo</a> &raquo;</li>
+        
+          <li><a href="mixmo.augmentations.html">mixmo.augmentations</a> &raquo;</li>
+        
+      <li>mixmo.augmentations.mixing_blocks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary/mixmo.augmentations.mixing_blocks.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-mixmo.augmentations.mixing_blocks">
+<span id="mixmo-augmentations-mixing-blocks"></span><h1>mixmo.augmentations.mixing_blocks<a class="headerlink" href="#module-mixmo.augmentations.mixing_blocks" title="Permalink to this headline">¶</a></h1>
+<p>Mixing blocks inspired from several standard mixing sample data augmentations</p>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._channel_mask.html#mixmo.augmentations.mixing_blocks._channel_mask" title="mixmo.augmentations.mixing_blocks._channel_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_channel_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Compute masks that toggle entire channels on and off</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._cow_mask.html#mixmo.augmentations.mixing_blocks._cow_mask" title="mixmo.augmentations.mixing_blocks._cow_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_cow_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Compute masks for CowMix lam is overridden by Cowmask’s parameters <a class="reference external" href="https://github.com/google-research/google-research/tree/master/milking_cowmask/masking">https://github.com/google-research/google-research/tree/master/milking_cowmask/masking</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._cutmix_mask.html#mixmo.augmentations.mixing_blocks._cutmix_mask" title="mixmo.augmentations.mixing_blocks._cutmix_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_cutmix_mask</span></code></a>(input_size, lam[, config_mix])</p></td>
+<td><p>Compute masks for CutMix</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._gaussian_blur_kernel.html#mixmo.augmentations.mixing_blocks._gaussian_blur_kernel" title="mixmo.augmentations.mixing_blocks._gaussian_blur_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_gaussian_blur_kernel</span></code></a>(sigma, sigma_max[, sym])</p></td>
+<td><p>Compute Gaussian kernel, as per the scipy.signal implementation</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._mixup_mask.html#mixmo.augmentations.mixing_blocks._mixup_mask" title="mixmo.augmentations.mixing_blocks._mixup_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_mixup_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Compute masks for MixUp (constant masks)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._n_cutinmix_mask.html#mixmo.augmentations.mixing_blocks._n_cutinmix_mask" title="mixmo.augmentations.mixing_blocks._n_cutinmix_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_n_cutinmix_mask</span></code></a>(input_size, lams, config_mix)</p></td>
+<td><p>Multivariate CutMix generalization (see paper) lam is a tuple here (simplex) that gives the proportion between n inputs CutMix(A, MixUp(B,C,…))</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._n_mix.html#mixmo.augmentations.mixing_blocks._n_mix" title="mixmo.augmentations.mixing_blocks._n_mix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_n_mix</span></code></a>(method, lams, input_size, config_mix)</p></td>
+<td><p>Computes masks for M&gt;2 inputs (requires lam tuples)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._n_mixup_mask.html#mixmo.augmentations.mixing_blocks._n_mixup_mask" title="mixmo.augmentations.mixing_blocks._n_mixup_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_n_mixup_mask</span></code></a>(input_size, lams, config_mix)</p></td>
+<td><p>Multivariate MixUp generalization lam is a tuple here (simplex) that gives the proportion between n inputs</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._noise_mask.html#mixmo.augmentations.mixing_blocks._noise_mask" title="mixmo.augmentations.mixing_blocks._noise_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_noise_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Random mask pixels drawn from uniform distribution</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._patchup_mask.html#mixmo.augmentations.mixing_blocks._patchup_mask" title="mixmo.augmentations.mixing_blocks._patchup_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_patchup_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Compute masks for PatchUp mixing <a class="reference external" href="https://github.com/chandar-lab/PatchUp">https://github.com/chandar-lab/PatchUp</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._patchuphard2d_mask.html#mixmo.augmentations.mixing_blocks._patchuphard2d_mask" title="mixmo.augmentations.mixing_blocks._patchuphard2d_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_patchuphard2d_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Wrapper function for PatchUp hard masking (2d variant)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._patchupsoft_mask.html#mixmo.augmentations.mixing_blocks._patchupsoft_mask" title="mixmo.augmentations.mixing_blocks._patchupsoft_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_patchupsoft_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Wrapper function for PatchUp soft masking</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam.html#mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam" title="mixmo.augmentations.mixing_blocks._rand_bbox_of_area_lam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_rand_bbox_of_area_lam</span></code></a>(size, lam[, seed])</p></td>
+<td><p>Compute the corner coordinates of a random rectangular box such that area_box/area_image=lam</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._single_mix.html#mixmo.augmentations.mixing_blocks._single_mix" title="mixmo.augmentations.mixing_blocks._single_mix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_single_mix</span></code></a>(method, lam, input_size, config_mix)</p></td>
+<td><p>Computes masks for two inputs (traditional MSDA methods)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._stack0_mask.html#mixmo.augmentations.mixing_blocks._stack0_mask" title="mixmo.augmentations.mixing_blocks._stack0_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_stack0_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Wrapper function for channel concat mixing</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._stack2_mask.html#mixmo.augmentations.mixing_blocks._stack2_mask" title="mixmo.augmentations.mixing_blocks._stack2_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_stack2_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Wrapper function for vertical concat mixing</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks._stack_mask.html#mixmo.augmentations.mixing_blocks._stack_mask" title="mixmo.augmentations.mixing_blocks._stack_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_stack_mask</span></code></a>(input_size, lam, config_mix)</p></td>
+<td><p>Compute masks for Channel/Horizontal/Vertical concat (number of images) x channel x (image width) x (image height)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks.mix.html#mixmo.augmentations.mixing_blocks.mix" title="mixmo.augmentations.mixing_blocks.mix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mix</span></code></a>(method, lams, input_size[, config_mix])</p></td>
+<td><p>Front facing function that computes the masks/lams for any number of inputs</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mixmo.augmentations.mixing_blocks.mix_manifolds.html#mixmo.augmentations.mixing_blocks.mix_manifolds" title="mixmo.augmentations.mixing_blocks.mix_manifolds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mix_manifolds</span></code></a>(list_lfeats, metadata)</p></td>
+<td><p>Main function to mix manifolds in network</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mixmo.augmentations.mixing_blocks._channel_mask.html" class="btn btn-neutral float-right" title="mixmo.augmentations.mixing_blocks._channel_mask" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mixmo.augmentations.augmix.AugMix.html" class="btn btn-neutral float-left" title="mixmo.augmentations.augmix.AugMix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

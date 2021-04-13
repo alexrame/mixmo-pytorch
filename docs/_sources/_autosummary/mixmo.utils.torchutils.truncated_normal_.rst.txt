@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.truncated\_normal\_
+==========================================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: truncated_normal_

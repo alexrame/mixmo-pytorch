@@ -1,0 +1,28 @@
+﻿mixmo.core.metrics\_wrapper.MetricsWrapper
+==========================================
+
+.. currentmodule:: mixmo.core.metrics_wrapper
+
+.. autoclass:: MetricsWrapper
+   :members:    
+   :private-members:    
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MetricsWrapper.__init__
+      ~MetricsWrapper.get_scores
+      ~MetricsWrapper.update
+      ~MetricsWrapper.update_diversity
+   
+   
+
+   
+   
+   

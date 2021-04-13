@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Welcome to MixMo’s documentation! &mdash; MixMo  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mixmo" href="_autosummary/mixmo.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> MixMo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/mixmo.html">mixmo</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">MixMo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Welcome to MixMo’s documentation!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="welcome-to-mixmo-s-documentation">
+<h1>Welcome to MixMo’s documentation!<a class="headerlink" href="#welcome-to-mixmo-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This is the documentation for the official pytorch implementation of the MixMo framework.</p>
+<p>The organization of the code as well as detailed module and function  descriptions can be found by clicking the <code class="docutils literal notranslate"><span class="pre">mixmo</span></code> table below:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mixmo.html#module-mixmo" title="mixmo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mixmo</span></code></a></p></td>
+<td><p>Official MixMo implementation in pytorch</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mixmo-mixing-multiple-inputs-for-multiple-outputs-via-deep-subnetworks">
+<h1>MixMo: Mixing Multiple Inputs for Multiple Outputs via Deep Subnetworks<a class="headerlink" href="#mixmo-mixing-multiple-inputs-for-multiple-outputs-via-deep-subnetworks" title="Permalink to this headline">¶</a></h1>
+<p>Official Pytorch implementation of the MixMo framework | <a class="reference external" href="https://arxiv.org/abs/2103.06132">paper</a></p>
+<p><a class="reference external" href="https://alexrame.github.io/">Alexandre Ramé</a>, <a class="reference external" href="http://perso.eleves.ens-rennes.fr/people/remy.sun/">Rémy Sun</a>, <a class="reference external" href="http://webia.lip6.fr/~cord/">Matthieu Cord</a></p>
+<a class="reference external image-reference" href="./mixmo_intro.png"><img alt="" src="mixmo_intro.png" /></a>
+<section id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
+<p>If you find this code useful for your research, please cite:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">rame2021ixmo</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">MixMo</span><span class="p">:</span> <span class="n">Mixing</span> <span class="n">Multiple</span> <span class="n">Inputs</span> <span class="k">for</span> <span class="n">Multiple</span> <span class="n">Outputs</span> <span class="n">via</span> <span class="n">Deep</span> <span class="n">Subnetworks</span><span class="p">},</span>
+    <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Alexandre</span> <span class="n">Rame</span> <span class="ow">and</span> <span class="n">Remy</span> <span class="n">Sun</span> <span class="ow">and</span> <span class="n">Matthieu</span> <span class="n">Cord</span><span class="p">},</span>
+    <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2021</span><span class="p">},</span>
+    <span class="n">journal</span><span class="o">=</span><span class="p">{</span><span class="n">arXiv</span> <span class="n">preprint</span> <span class="n">arXiv</span><span class="p">:</span><span class="mf">2103.06132</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="abstract">
+<h2>Abstract<a class="headerlink" href="#abstract" title="Permalink to this headline">¶</a></h2>
+<p>Recent strategies achieved ensembling “for free” by fitting concurrently diverse subnetworks inside a single base network. The main idea during training is that each subnetwork learns to classify only one of the multiple inputs simultaneously provided. However, the question of how to best mix these multiple inputs has not been studied so far.</p>
+<p>In this paper, we introduce MixMo, a new generalized framework for learning multi-input multi-output deep subnetworks. Our key motivation is to replace the suboptimal summing operation hidden in previous approaches by a more appropriate mixing mechanism. For that purpose, we draw inspiration from successful mixed sample data augmentations. We show that binary mixing in features - particularly with rectangular patches from CutMix - enhances results by making subnetworks stronger and more diverse.</p>
+<p>We improve state of the art for image classification on CIFAR-100 and Tiny ImageNet datasets. Our easy to implement models notably outperform data augmented deep ensembles, without the inference and memory overheads. As we operate in features and simply better leverage the expressiveness of large networks, we open a new line of research complementary to previous works.</p>
+</section>
+</section>
+<section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<section id="most-important-code-sections">
+<h2>Most important code sections<a class="headerlink" href="#most-important-code-sections" title="Permalink to this headline">¶</a></h2>
+<p>This repository provides a general wrapper over PyTorch to reproduce the main results from the paper. The code sections specific to MixMo can be found in:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mixmo.loaders.dataset_wrapper.py</span></code> and specifically <code class="docutils literal notranslate"><span class="pre">MixMoDataset</span></code> to create batches with multiple inputs and multiple outputs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixmo.augmentations.mixing_blocks.py</span></code> where we create the mixing masks, e.g. via linear summing (<code class="docutils literal notranslate"><span class="pre">_mixup_mask</span></code>) or via patch mixing (<code class="docutils literal notranslate"><span class="pre">_cutmix_mask</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixmo.networks.resnet.py</span></code> and <code class="docutils literal notranslate"><span class="pre">mixmo.networks.wrn.py</span></code> where we adapt the network structures to handle:</p>
+<ul class="simple">
+<li><p>multiple inputs via multiple conv1s encoders (one for each input). The function <code class="docutils literal notranslate"><span class="pre">mixmo.augmentations.mixing_blocks.mix_manifold</span></code> is used to mix the extracted representations according to the masks provided in metadata from MixMoDataset.</p></li>
+<li><p>multiple outputs via multiple predictions.</p></li>
+</ul>
+</li>
+</ol>
+<p>This translates to additional tensor management in <code class="docutils literal notranslate"><span class="pre">mixmo.learners.learner.py</span></code>.</p>
+</section>
+<section id="pseudo-code">
+<h2>Pseudo code<a class="headerlink" href="#pseudo-code" title="Permalink to this headline">¶</a></h2>
+<p>Our <code class="docutils literal notranslate"><span class="pre">MixMoDataset</span></code> wraps a PyTorch Dataset. The <code class="docutils literal notranslate"><span class="pre">batch_repetition_sampler</span></code> repeats the same index <code class="docutils literal notranslate"><span class="pre">b</span></code> times in each batch. Moreover, we provide <code class="docutils literal notranslate"><span class="pre">SoftCrossEntropyLoss</span></code> which handles soft-labels required by mixed sample data augmentations such as CutMix.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mixmo.loaders</span> <span class="kn">import</span> <span class="p">(</span><span class="n">dataset_wrapper</span><span class="p">,</span> <span class="n">batch_repetition_sampler</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mixmo.networks.wrn</span> <span class="kn">import</span> <span class="n">WideResNetMixMo</span>
+<span class="kn">from</span> <span class="nn">mixmo.core.loss</span> <span class="kn">import</span> <span class="n">SoftCrossEntropyLoss</span> <span class="k">as</span> <span class="n">criterion</span>
+
+<span class="o">...</span>
+
+<span class="c1"># cf mixmo.loaders.loader</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">dataset_wrapper</span><span class="o">.</span><span class="n">MixMoDataset</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">CIFAR100</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataplace</span><span class="p">,</span> <span class="s2">&quot;cifar100-data&quot;</span><span class="p">)),</span>
+        <span class="n">num_members</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># we use M=2 subnetworks</span>
+        <span class="n">mixmo_mix_method</span><span class="o">=</span><span class="s2">&quot;cutmix&quot;</span><span class="p">,</span>  <span class="c1"># patch mixing, linker to mixmo.augmentations.mixing_blocks._cutmix_mask</span>
+        <span class="n">mixmo_alpha</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># mixing ratio sampled from Beta distribution with concentration 2</span>
+        <span class="n">mixmo_weight_root</span><span class="o">=</span><span class="mi">3</span>  <span class="c1"># root for reweighting of loss components 3</span>
+        <span class="p">)</span>
+<span class="n">network</span> <span class="o">=</span> <span class="n">WideResNetMixMo</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span> <span class="n">widen_factor</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="o">...</span>
+
+<span class="c1"># cf mixmo.learners.learner and mixmo.learners.model_wrapper</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">indexes_0</span><span class="p">,</span> <span class="n">indexes_1</span> <span class="ow">in</span> <span class="n">batch_repetition_sampler</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">inputs_0</span><span class="p">,</span> <span class="n">inputs_1</span><span class="p">,</span> <span class="n">targets_0</span><span class="p">,</span> <span class="n">targets_1</span><span class="p">,</span> <span class="n">metadata_mixmo_masks</span><span class="p">)</span> <span class="ow">in</span> <span class="n">train_dataset</span><span class="p">(</span><span class="n">indexes_0</span><span class="p">,</span> <span class="n">indexes_1</span><span class="p">):</span>
+            <span class="n">outputs_0</span><span class="p">,</span> <span class="n">outputs_1</span> <span class="o">=</span> <span class="n">network</span><span class="p">([</span><span class="n">inputs_0</span><span class="p">,</span> <span class="n">inputs_1</span><span class="p">],</span> <span class="n">metadata_mixmo_masks</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs_0</span><span class="p">,</span> <span class="n">targets_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs_1</span><span class="p">,</span> <span class="n">targets_1</span><span class="p">)</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration-files">
+<h2>Configuration files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h2>
+<p>Our code heavily relies on yaml config files. In the <code class="docutils literal notranslate"><span class="pre">mixmo-pytorch/config</span></code> folder, we provide the configs to reproduce the main paper results.</p>
+<p>For example, the state-of-the-art <code class="docutils literal notranslate"><span class="pre">exp_cifar100_wrn2810-2_cutmixmo-p5_msdacutmix_bar4</span></code> means that:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cifar100</span></code>: dataset is CIFAR-100.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wrn2810-2</span></code>: WideResNet-28-10 network architecture with <code class="docutils literal notranslate"><span class="pre">M=2</span></code> subnetworks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cutmixmo-p5</span></code>: mixing block is patch mixing with probability <code class="docutils literal notranslate"><span class="pre">p=0.5</span></code> else linear mixing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msdacutmix</span></code>: use <a class="reference external" href="https://arxiv.org/abs/1905.04899">CutMix</a> mixed sample data augmentation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bar4</span></code>: batch repetition to <code class="docutils literal notranslate"><span class="pre">b=4</span></code>.</p></li>
+</ul>
+</section>
+</section>
+<section id="results-and-available-checkpoints">
+<h1>Results and available checkpoints<a class="headerlink" href="#results-and-available-checkpoints" title="Permalink to this headline">¶</a></h1>
+<section id="cifar-100-with-wideresnet-28-10">
+<h2>CIFAR-100 with WideResNet-28-10<a class="headerlink" href="#cifar-100-with-wideresnet-28-10" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Subnetwork method</p></th>
+<th class="head"><p>MSDA</p></th>
+<th class="head"><p>Top-1 Accuracy</p></th>
+<th class="head"><p>config file in mixmo-pytorch/config/cifar100</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>–</p></td>
+<td><p>Vanilla</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/12pATFGjsDN1Tq4p-S0-rO59sX-F_O2ol/view?usp=sharing">81.79</a></p></td>
+<td><p>exp_cifar100_wrn2810_1net_standard_bar1.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>–</p></td>
+<td><p>Mixup</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1tqsHgqDwx3p562NtYHb5Im-tRB6CnJ8M/view?usp=sharing">83.43</a></p></td>
+<td><p>exp_cifar100_wrn2810_1net_msdamixup_bar1.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>–</p></td>
+<td><p>CutMix</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/11ZiDgZoaEVEhhyJMlDA61P9QB7HZuXFL/view?usp=sharing">83.95</a></p></td>
+<td><p>exp_cifar100_wrn2810_1net_msdacutmix_bar1.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>MIMO</p></td>
+<td><p>–</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1SBAjGJVfC_QHCoXy5y_Ci49J-E18ait3/view?usp=sharing">82.92</a></p></td>
+<td><p>exp_cifar100_wrn2810-2_mimo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Linear-MixMo</p></td>
+<td><p>–</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1eAA6O6_v-L3aFzQtsHY2pEAGxUpXu15c/view?usp=sharing">82.96</a></p></td>
+<td><p>exp_cifar100_wrn2810-2_linearmixmo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cut-MixMo</p></td>
+<td><p>–</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1Buql47NcSe-qm8LqPYEa02g319T1yakK/view?usp=sharing">85.52</a> - <a class="reference external" href="https://drive.google.com/file/d/1vxJFKuO5RSH9XcA2aSYUMHCrtD6pDyMA/view?usp=sharing">85.59</a></p></td>
+<td><p>exp_cifar100_wrn2810-2_cutmixmo-p5_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Linear-MixMo</p></td>
+<td><p>CutMix</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1Ma_Rjf1Z8j0CK5jLenk8UFLwZgbrDaqP/view?usp=sharing">85.36</a> - <a class="reference external" href="https://drive.google.com/file/d/1ouGQjho-cmJUkrDpDehvs1zwK7BUJWoN/view?usp=sharing">85.57</a></p></td>
+<td><p>exp_cifar100_wrn2810-2_linearmixmo_msdacutmix_bar4.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cut-MixMo</p></td>
+<td><p>CutMix</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1Y9BDgqWFdYK5hqPQl-AgApCTIewTGbFo/view?usp=sharing">85.77</a> - <a class="reference external" href="https://drive.google.com/file/d/1fwCfO2wO6VXziUp9HHE32MpCWak9AlOc/view?usp=sharing">85.92</a></p></td>
+<td><p>exp_cifar100_wrn2810-2_cutmixmo-p5_msdacutmix_bar4.yaml</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="cifar-10-with-wideresnet-28-10">
+<h2>CIFAR-10 with WideResNet-28-10<a class="headerlink" href="#cifar-10-with-wideresnet-28-10" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Subnetwork method</p></th>
+<th class="head"><p>MSDA</p></th>
+<th class="head"><p>Top-1 Accuracy</p></th>
+<th class="head"><p>config file in mixmo-pytorch/config/cifar10</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>–</p></td>
+<td><p>Vanilla</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1o6aGKfHAN8PQrsXAoyAJHak-lqAOfwm8/view?usp=sharing">96.37</a></p></td>
+<td><p>exp_cifar10_wrn2810_1net_standard_bar1.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>–</p></td>
+<td><p>Mixup</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1yI5cLHPfUDI00Eiy3dNRm2bgiv2orwxE/view?usp=sharing">97.07</a></p></td>
+<td><p>exp_cifar10_wrn2810_1net_msdamixup_bar1.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>–</p></td>
+<td><p>CutMix</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1hXjTCTYYy99StxAP0Y3hNqjQ9ezhqsXh/view?usp=sharing">97.28</a></p></td>
+<td><p>exp_cifar10_wrn2810_1net_msdacutmix_bar1.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>MIMO</p></td>
+<td><p>–</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1NRAlxIILIUIUNWhXFHgHrSyx5T4oCmdZ/view?usp=sharing">96.71</a></p></td>
+<td><p>exp_cifar10_wrn2810-2_mimo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Linear-MixMo</p></td>
+<td><p>–</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1BUoaNLDMuhqXl3UKC2QoVT23Z1544i_v/view?usp=sharing">96.88</a></p></td>
+<td><p>exp_cifar10_wrn2810-2_linearmixmo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cut-MixMo</p></td>
+<td><p>–</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1eA_H9ePj_OgjTqDV0v2F5biI4mt_J98c/view?usp=sharing">97.52</a></p></td>
+<td><p>exp_cifar10_wrn2810-2_cutmixmo-p5_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Linear-MixMo</p></td>
+<td><p>CutMix</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1cLP7EVYJ_YY7w2rOaaRWMxjZkOBWZ4Ti/view?usp=sharing">97.73</a></p></td>
+<td><p>exp_cifar10_wrn2810-2_linearmixmo_msdacutmix_bar4.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cut-MixMo</p></td>
+<td><p>CutMix</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1dGB0Rz64Wr5nv4vQqLi19Kt3vzKH0blC/view?usp=sharing">97.83</a></p></td>
+<td><p>exp_cifar10_wrn2810-2_cutmixmo-p5_msdacutmix_bar4.yaml</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tiny-imagenet-200-with-preactresnet-18-width">
+<h2>Tiny ImageNet-200 with PreActResNet-18-width<a class="headerlink" href="#tiny-imagenet-200-with-preactresnet-18-width" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Top-1 Accuracy</p></th>
+<th class="head"><p>config file in mixmo-pytorch/config/tiny</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Vanilla</p></td>
+<td><p>1</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/14N-ixnF31zjbGh6IzS3-pHj1KOJ_e5uF/view?usp=sharing">62.75</a></p></td>
+<td><p>exp_tinyimagenet_res18_1net_standard_bar1.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Linear-MixMo</p></td>
+<td><p>1</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1MDYuE21zFphdnp83h-LOIBnXu4b5qhD-/view?usp=sharing">62.91</a></p></td>
+<td><p>exp_tinyimagenet_res18-2_linearmixmo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Cut-MixMo</p></td>
+<td><p>1</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/19jB-yk2s1LeuQDXzjNQmo_eil8btsxa4/view?usp=sharing">64.32</a></p></td>
+<td><p>exp_tinyimagenet_res18-2_cutmixmo-p5_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Vanilla</p></td>
+<td><p>2</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1SdBW7wie9HT5OqW15r6A6ixhY87aC7Ct/view?usp=sharing">64.91</a></p></td>
+<td><p>exp_tinyimagenet_res182_1net_standard_bar1.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Linear-MixMo</p></td>
+<td><p>2</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1Q-U5u9ZN3h-cLBOEvbu_hOp0M7vMYjgc/view?usp=sharing">67.03</a></p></td>
+<td><p>exp_tinyimagenet_res182-2_linearmixmo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cut-MixMo</p></td>
+<td><p>2</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/16LME8LGCwmwUWmrzGiCzdTaFOURwolQR/view?usp=sharing">69.12</a></p></td>
+<td><p>exp_tinyimagenet_res182-2_cutmixmo-p5_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Vanilla</p></td>
+<td><p>3</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1lvX6fIKIxbVDa9VC-8GTpHbJG2avHB9F/view?usp=sharing">65.84</a></p></td>
+<td><p>exp_tinyimagenet_res183_1net_standard_bar1.yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p>Linear-MixMo</p></td>
+<td><p>3</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1W0QoVQYw4ftCBemralG6KtZSgICxO7ih/view?usp=sharing">68.36</a></p></td>
+<td><p>exp_tinyimagenet_res183-2_linearmixmo_standard_bar4.yaml</p></td>
+</tr>
+<tr class="row-even"><td><p>Cut-MixMo</p></td>
+<td><p>3</p></td>
+<td><p><a class="reference external" href="https://drive.google.com/file/d/1Q-U5u9ZN3h-cLBOEvbu_hOp0M7vMYjgc/view?usp=sharing">70.23</a></p></td>
+<td><p>exp_tinyimagenet_res183-2_cutmixmo-p5_standard_bar4.yaml</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<section id="requirements-overview">
+<h2>Requirements overview<a class="headerlink" href="#requirements-overview" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>python &gt;= 3.6</p></li>
+<li><p>torch &gt;= 1.4.0</p></li>
+<li><p>torchsummary &gt;= 1.5.1</p></li>
+<li><p>torchvision &gt;= 0.5.0</p></li>
+<li><p>tensorboard &gt;= 1.14.0</p></li>
+</ul>
+</section>
+<section id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p>Clone the repo:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/alexrame/mixmo-pytorch.git
+</pre></div>
+</div>
+</li>
+<li><p>Install this repository and the dependencies using pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ conda create --name mixmo <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.6.10
+$ conda activate mixmo
+$ <span class="nb">cd</span> mixmo-pytorch
+$ pip install -r requirements.txt
+</pre></div>
+</div>
+</li>
+</ol>
+<p>With this, you can edit the MixMo code on the fly.</p>
+</section>
+<section id="datasets">
+<h2>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h2>
+<p>We advise to first create a dedicated data folder <code class="docutils literal notranslate"><span class="pre">dataplace</span></code>, that will be provided as an argument in the subsequent scripts.</p>
+<ul class="simple">
+<li><p>CIFAR</p></li>
+</ul>
+<p>CIFAR-10 and CIFAR-100 datasets are managed by Pytorch dataloader. First time you run a script, the dataloader will download the dataset in your provided <code class="docutils literal notranslate"><span class="pre">dataplace</span></code>.</p>
+<ul class="simple">
+<li><p>Tiny-ImageNet</p></li>
+</ul>
+<p>Tiny-ImageNet dataset needs to be download beforehand. The following process is forked from <a class="reference external" href="https://github.com/vikasverma1077/manifold_mixup/tree/master/supervised">manifold mixup</a>.</p>
+<ol class="arabic simple">
+<li><p>Download the zipped data from <a class="reference external" href="https://tiny-imagenet.herokuapp.com/">https://tiny-imagenet.herokuapp.com/</a>.</p></li>
+<li><p>Extract the zipped data in folder <code class="docutils literal notranslate"><span class="pre">dataplace</span></code>.</p></li>
+<li><p>Run the following script (This will arange the validation data in the format required by the pytorch loader).</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python scripts/script_load_tiny_data.py --dataplace <span class="nv">$dataplace</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="running-the-code">
+<h1>Running the code<a class="headerlink" href="#running-the-code" title="Permalink to this headline">¶</a></h1>
+<section id="training">
+<h2>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h2>
+<section id="baseline">
+<h3>Baseline<a class="headerlink" href="#baseline" title="Permalink to this headline">¶</a></h3>
+<p>First, to train a baseline model, simply execute the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 scripts/train.py --config_path config/cifar100/exp_cifar100_wrn2810_1net_standard_bar1.yaml --dataplace <span class="nv">$dataplace</span> --saveplace <span class="nv">$saveplace</span>
+</pre></div>
+</div>
+<p>It will create an output folder <code class="docutils literal notranslate"><span class="pre">exp_cifar100_wrn2810_1net_standard_bar1</span></code> located in parent folder <code class="docutils literal notranslate"><span class="pre">saveplace</span></code>. This folder includes model checkpoints, a copy of your config file, logs and tensorboard logs. By default, if the output folder already exists, training will load the last weights epoch and will continue. If you want to forcefully restart training, simply add <code class="docutils literal notranslate"><span class="pre">--from_scratch</span></code> as an argument.</p>
+</section>
+<section id="mixmo">
+<h3>MixMo<a class="headerlink" href="#mixmo" title="Permalink to this headline">¶</a></h3>
+<p>When training MixMo, you just need to select the appropriate config file. For example, to obtain state of the art results on CIFAR-100 by combining Cut-MixMo and CutMix, just execute:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 scripts/train.py --config_path config/cifar100/exp_cifar100_wrn2810-2_cutmixmo-p5_msdacutmix_bar4.yaml --dataplace <span class="nv">$dataplace</span> --saveplace <span class="nv">$saveplace</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h2>
+<p>To evaluate the accuracy of a given strategy, you can train your own model, or just download our pretrained <a class="reference external" href="https://drive.google.com/file/d/1fwCfO2wO6VXziUp9HHE32MpCWak9AlOc/view?usp=sharing">checkpoints</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 scripts/evaluate.py --config_path config/cifar100/exp_cifar100_wrn2810-2_cutmixmo-p5_msdacutmix_bar4.yaml --dataplace <span class="nv">$dataplace</span> --checkpoint <span class="nv">$checkpoint</span> --tempscal
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">checkpoint</span></code> can be either:</p>
+<ul>
+<li><p>a path towards a checkpoint.</p></li>
+<li><p>an int matching the training epoch you wish to evaluate. In that case, you need to provide <code class="docutils literal notranslate"><span class="pre">--saveplace</span> <span class="pre">$saveplace</span></code>.</p></li>
+<li><p>the string <code class="docutils literal notranslate"><span class="pre">best</span></code>: we then automatically select the best training epoch. In that case, you need to provide <code class="docutils literal notranslate"><span class="pre">--saveplace</span> <span class="pre">$saveplace</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tempscal</span></code>: indicates that you will apply temperature scaling</p></li>
+</ul>
+<p>Results will be printed at the end of the script.</p>
+<p>If you wish to test the models <a class="reference external" href="https://arxiv.org/abs/1903.12261">against common corruptions and perturbations</a>, download the <a class="reference external" href="https://zenodo.org/record/3555552">CIFAR-100-c dataset</a> in your <code class="docutils literal notranslate"><span class="pre">dataplace</span></code>. Then use <code class="docutils literal notranslate"><span class="pre">--robustness</span></code> at evaluation.</p>
+</section>
+<section id="create-your-own-configuration-files-and-learning-strategies">
+<h2>Create your own configuration files and learning strategies<a class="headerlink" href="#create-your-own-configuration-files-and-learning-strategies" title="Permalink to this headline">¶</a></h2>
+<p>You can create new configs automatically via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 scripts/templateutils_mixmo.py --template_path scripts/exp_mixmo_template.yaml --config_dir config/<span class="nv">$your_config_dir</span> --dataset <span class="nv">$dataset</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="acknowledgements-and-references">
+<h1>Acknowledgements and references<a class="headerlink" href="#acknowledgements-and-references" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Our implementation is based on the repository: <a class="reference external" href="https://github.com/valeoai/ConfidNet">https://github.com/valeoai/ConfidNet</a>. We thus thank <a class="reference external" href="https://chcorbi.github.io/">Charles Corbière</a> for his work <a class="reference external" href="https://papers.nips.cc/paper/2019/hash/757f843a169cc678064d9530d12a1881-Abstract.html">Addressing Failure Prediction by Learning Model Confidence</a>.</p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2010.06610">MIMO</a>: <a class="reference external" href="https://github.com/google/edward2/">https://github.com/google/edward2/</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1905.04899">CutMix</a>: <a class="reference external" href="https://github.com/ildoonet/cutmix/">https://github.com/ildoonet/cutmix/</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1710.09412">Mixup</a>: <a class="reference external" href="https://github.com/facebookresearch/mixup-cifar10">https://github.com/facebookresearch/mixup-cifar10</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1912.02781">AugMix</a>: <a class="reference external" href="https://github.com/google-research/augmix/">https://github.com/google-research/augmix/</a></p></li>
+<li><p><a class="reference external" href="https://github.com/gpleiss/temperature_scaling/">Temperature Scaling</a>: <a class="reference external" href="https://github.com/gpleiss/temperature_scaling/">https://github.com/gpleiss/temperature_scaling/</a></p></li>
+<li><p>Metrics:</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/bayesgroup/pytorch-ensembles/">https://github.com/bayesgroup/pytorch-ensembles/</a></p></li>
+<li><p><a class="reference external" href="https://github.com/kbogas/EnsembleDiversityTests/">https://github.com/kbogas/EnsembleDiversityTests/</a></p></li>
+<li><p><a class="reference external" href="https://github.com/scikit-learn-contrib/DESlib">https://github.com/scikit-learn-contrib/DESlib</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="_autosummary/mixmo.html" class="btn btn-neutral float-right" title="mixmo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alexandre Rame, Rémy Sun and Matthieu Cord.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

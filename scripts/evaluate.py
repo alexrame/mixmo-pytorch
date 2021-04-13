@@ -61,7 +61,6 @@ def parse_args():
 def transform_args(args):
     # shared transform
     config_args = misc.load_config_yaml(args.config_path)
-
     config.cfg.DEBUG = args.debug
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

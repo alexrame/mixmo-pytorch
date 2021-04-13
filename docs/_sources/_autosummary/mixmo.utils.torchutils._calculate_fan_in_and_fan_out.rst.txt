@@ -1,0 +1,6 @@
+mixmo.utils.torchutils.\_calculate\_fan\_in\_and\_fan\_out
+==========================================================
+
+.. currentmodule:: mixmo.utils.torchutils
+
+.. autofunction:: _calculate_fan_in_and_fan_out

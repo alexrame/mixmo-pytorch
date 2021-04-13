@@ -1,0 +1,6 @@
+mixmo.utils.misc.print\_dict
+============================
+
+.. currentmodule:: mixmo.utils.misc
+
+.. autofunction:: print_dict

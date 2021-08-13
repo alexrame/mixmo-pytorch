@@ -11,11 +11,11 @@ Official PyTorch implementation of the MixMo framework | [paper](https://arxiv.o
 If you find this code useful for your research, please cite:
 
 ```
-@article{rame2021ixmo,
+@inproceedings{rame2021ixmo,
     title={MixMo: Mixing Multiple Inputs for Multiple Outputs via Deep Subnetworks},
     author={Alexandre Rame and Remy Sun and Matthieu Cord},
     year={2021},
-    journal={arXiv preprint arXiv:2103.06132}
+    booktitle={ICCV 2021}
 }
 ```
 ## Abstract
@@ -200,7 +200,7 @@ $ python3 scripts/evaluate.py --config_path config/cifar100/exp_cifar100_wrn2810
 
 Results will be printed at the end of the script.
 
-If you wish to test the models [against common corruptions and perturbations](https://arxiv.org/abs/1903.12261), download the [CIFAR-100-c dataset](https://zenodo.org/record/3555552) in your ```dataplace```. Then use `--robustness` at evaluation.
+If you wish to test the models [against common corruptions and perturbations](https://arxiv.org/abs/1903.12261), download the [CIFAR-100-c dataset](https://zenodo.org/record/3555552) in your ```dataplace```. Then use `--corruptions` at evaluation.
 
 ## Create your own configuration files and learning strategies
 
